@@ -1,0 +1,27 @@
+/**
+ * Error codes — centralized enum.
+ * All AppErrors must carry one of these codes.
+ * Add new codes here as new modules are introduced.
+ */
+export enum ErrorCode {
+  // Generic
+  UNKNOWN = 'UNKNOWN',
+  VALIDATION_FAILED = 'VALIDATION_FAILED',
+  NETWORK_FAILURE = 'NETWORK_FAILURE',
+  NOT_FOUND = 'NOT_FOUND',
+
+  // Auth
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  SESSION_EXPIRED = 'SESSION_EXPIRED',
+  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
+  EMAIL_NOT_CONFIRMED = 'EMAIL_NOT_CONFIRMED',
+  OAUTH_FAILED = 'OAUTH_FAILED',
+
+  // Workspace
+  WORKSPACE_CREATION_FAILED = 'WORKSPACE_CREATION_FAILED',
+  WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
+
+  // Projects
+  PROJECT_NOT_FOUND = 'PROJECT_NOT_FOUND',
+  PROJECT_CREATION_FAILED = 'PROJECT_CREATION_FAILED',
+}

@@ -1,0 +1,95 @@
+@import 'tailwindcss';
+
+/*
+ * Resigna Design Tokens — Dark Mode First
+ * All CSS variables are consumed by components via Tailwind utility classes.
+ * Never hardcode hex values in components — always use hsl(var(--token)).
+ *
+ * Token naming follows shadcn/ui conventions for compatibility.
+ */
+
+@layer base {
+  :root {
+    /* ─── Backgrounds ──────────────────────────────────── */
+    --background: 224 10% 6%; /* #0d0e11 — near-black page bg */
+    --foreground: 210 20% 92%; /* #e4e8ef — primary text */
+
+    /* ─── Card / Surface ───────────────────────────────── */
+    --card: 224 10% 9%; /* #131519 — elevated surface */
+    --card-foreground: 210 20% 92%;
+
+    /* ─── Popover ──────────────────────────────────────── */
+    --popover: 224 10% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    /* ─── Primary (Accent) ─────────────────────────────── */
+    --primary: 243 75% 65%; /* #6366f1 — restrained indigo */
+    --primary-foreground: 0 0% 100%;
+
+    /* ─── Secondary ────────────────────────────────────── */
+    --secondary: 224 10% 14%;
+    --secondary-foreground: 210 20% 92%;
+
+    /* ─── Muted ────────────────────────────────────────── */
+    --muted: 224 10% 13%; /* subtle backgrounds */
+    --muted-foreground: 215 16% 55%; /* de-emphasized text */
+
+    /* ─── Accent ───────────────────────────────────────── */
+    --accent: 224 10% 14%;
+    --accent-foreground: 210 20% 92%;
+
+    /* ─── Destructive ──────────────────────────────────── */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* ─── Border / Input / Ring ────────────────────────── */
+    --border: 224 10% 16%; /* subtle border */
+    --input: 224 10% 14%;
+    --ring: 243 75% 65%;
+
+    /* ─── Radius ───────────────────────────────────────── */
+    --radius: 0.5rem; /* 8px base radius */
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-size: 0.875rem; /* 14px — Information-dense like Linear */
+    line-height: 1.5;
+  }
+
+  /* Custom scrollbar — minimal, dark */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Focus visible — consistent across all interactive elements */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
