@@ -24,7 +24,7 @@ The AI module abstracts all AI provider integrations behind interfaces.
 
 ```ts
 interface AIProvider {
-  generateAfffinityMap(input: KnowledgeModel): Promise<AfffinityMap>;
+  generateAffinityMap(input: KnowledgeModel): Promise<AffinityMap>;
   generatePersona(input: KnowledgeModel): Promise<Persona>;
   generateJourneyMap(input: KnowledgeModel): Promise<JourneyMap>;
   generateHMW(input: KnowledgeModel): Promise<HMWStatement[]>;

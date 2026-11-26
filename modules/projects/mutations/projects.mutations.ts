@@ -24,7 +24,8 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: projectsService.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all('') }); // Hacky but works for now to invalidate all projects since we don't have workspaceId here
+      // The deleted project's workspace isn't known here, so refresh every project query.
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.root() });
       toast.success('Project deleted');
     },
     onError: (error) => {

@@ -1,9 +1,9 @@
 'use client';
 
 import { use } from 'react';
-import { useProject } from '@/modules/projects/hooks/use-projects';
+import { useProject } from '@/modules/projects';
 import { Skeleton } from '@/shared/components/Skeleton';
-import { NotFound } from '@/shared/components/ErrorPage';
+import { NetworkError, NotFound } from '@/shared/components/ErrorPage';
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -16,7 +16,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 }
 
 function ProjectDetailContent({ projectId }: { projectId: string }) {
-  const { data: project, isLoading } = useProject(projectId);
+  const { data: project, isLoading, isError, refetch } = useProject(projectId);
 
   if (isLoading) {
     return (
@@ -25,6 +25,10 @@ function ProjectDetailContent({ projectId }: { projectId: string }) {
         <Skeleton className="h-4 w-72" />
       </div>
     );
+  }
+
+  if (isError) {
+    return <NetworkError onRetry={() => refetch()} />;
   }
 
   if (!project) {
@@ -40,7 +44,6 @@ function ProjectDetailContent({ projectId }: { projectId: string }) {
         )}
       </div>
 
-      {/* Sprint 1 content goes here */}
       <div className="rounded-lg border border-[hsl(var(--border))] border-dashed p-12 text-center">
         <p className="text-sm text-[hsl(var(--muted-foreground))]">
           Research workspace — coming in Sprint 1

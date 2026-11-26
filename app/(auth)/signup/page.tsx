@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SignupForm } from '@/modules/auth/components/SignupForm';
-import { OAuthButtons } from '@/modules/auth/components/OAuthButtons';
-import { AuthCard } from '@/modules/auth/components/AuthCard';
+import { SignupForm, OAuthButtons, AuthCard } from '@/modules/auth';
 
 export const metadata: Metadata = {
   title: 'Create an account',

@@ -1,5 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { ROUTES } from '@/shared/constants/routes';
+import { safeRedirectPath } from '@/shared/utils/redirect';
 
 /**
  * OAuth callback handler.
@@ -9,7 +11,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/projects';
+  const next = safeRedirectPath(searchParams.get('next'), ROUTES.projects);
 
   if (code) {
     const supabase = await createServerSupabaseClient();
@@ -21,5 +23,5 @@ export async function GET(request: Request) {
   }
 
   // Redirect to login with error state if code exchange fails
-  return NextResponse.redirect(`${origin}/login?error=oauth_failed`);
+  return NextResponse.redirect(`${origin}${ROUTES.login}?error=oauth_failed`);
 }

@@ -1,52 +1,54 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+import { env } from '@/config/env';
 
 const PUBLIC_ROUTES = ['/login', '/signup'];
 const AUTH_ONLY_ROUTES = ['/login', '/signup'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setAll(cookiesToSet: { name: string; value: string; options: any }[]) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request: { headers: request.headers } });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options),
-        );
+  const supabase = createServerClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request: { headers: request.headers } });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options),
+          );
+        },
       },
     },
-  });
+  );
 
-  // Refresh session if expired — required for Server Components
+  // getUser() revalidates the token with Supabase Auth (getSession() only reads the cookie,
+  // which can be spoofed) and refreshes an expired session for Server Components.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route);
   const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some((route) => pathname === route);
 
   // Redirect unauthenticated users to login
-  if (!session && !isPublicRoute) {
+  if (!user && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectedFrom', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users away from auth-only routes
-  if (session && isAuthOnlyRoute) {
+  if (user && isAuthOnlyRoute) {
     return NextResponse.redirect(new URL('/projects', request.url));
   }
 

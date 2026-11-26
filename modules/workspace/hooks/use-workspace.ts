@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/constants/query-keys';
 import { workspaceService } from '../services/workspace.service';
-import { useCurrentUser } from '@/modules/auth/hooks/use-session';
+import { useCurrentUser } from '@/modules/auth';
 
 export function useWorkspaces() {
   const { user } = useCurrentUser();

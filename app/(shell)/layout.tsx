@@ -1,8 +1,6 @@
 'use client';
 
-import { Sidebar } from '@/modules/shell/sidebar/Sidebar';
-import { Topbar } from '@/modules/shell/topbar/Topbar';
-import { CommandPalette } from '@/modules/shell/command-palette/CommandPalette';
+import { Sidebar, Topbar, CommandPalette } from '@/modules/shell';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 
 export default function ShellLayout({ children }: { children: React.ReactNode }) {

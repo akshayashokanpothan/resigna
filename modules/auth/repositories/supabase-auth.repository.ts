@@ -1,7 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { AuthError } from '@/shared/errors';
 import { ErrorCode } from '@/shared/errors/error-codes';
-import type { AuthUser, OAuthProvider, Session } from '../types/auth.types';
+import type {
+  AuthUser,
+  OAuthProvider,
+  Session,
+  SignUpCredentials,
+  SignUpResult,
+} from '../types/auth.types';
 import type { AuthRepository } from './auth.repository';
 import { env } from '@/config/env';
 
@@ -58,16 +64,14 @@ export class SupabaseAuthRepository implements AuthRepository {
     };
   }
 
-  async signUp(
-    credentials: import('../types/auth.types').SignUpCredentials,
-  ): Promise<import('../types/auth.types').SignUpResult> {
+  async signUp(credentials: SignUpCredentials): Promise<SignUpResult> {
     const { email, password, metadata } = credentials;
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
       options: { data: metadata },
     });
-    if (error) throw new AuthError(error.message, ErrorCode.OAUTH_FAILED, error);
+    if (error) throw new AuthError(error.message, ErrorCode.SIGNUP_FAILED, error);
 
     const user = data.user ? mapUser(data.user) : null;
     const session = data.session

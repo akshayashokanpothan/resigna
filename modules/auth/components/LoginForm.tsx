@@ -3,12 +3,17 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { loginSchema, type LoginInput } from '../schemas/auth.schema';
 import { getAuthService } from '../services/auth.service';
 import { ROUTES } from '@/shared/constants/routes';
 import { toast } from '@/shared/utils/toast';
 import { cn } from '@/shared/utils/cn';
+import { safeRedirectPath } from '@/shared/utils/redirect';
+
+function getSearchParam(name: string): string | null {
+  return new URLSearchParams(window.location.search).get(name);
+}
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,12 +27,18 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
+  useEffect(() => {
+    if (getSearchParam('error') === 'oauth_failed') {
+      toast.error('Social sign-in failed. Please try again.');
+    }
+  }, []);
+
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
     try {
       const authService = getAuthService();
       await authService.signInWithEmail(data.email, data.password);
-      router.push(ROUTES.projects);
+      router.push(safeRedirectPath(getSearchParam('redirectedFrom'), ROUTES.projects));
       router.refresh();
     } catch (error) {
       toast.error('Invalid credentials. Please check your email and password.', error);

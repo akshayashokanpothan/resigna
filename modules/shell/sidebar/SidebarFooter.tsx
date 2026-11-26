@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSignOut } from '@/modules/auth/hooks/use-sign-out';
-import { useCurrentUser } from '@/modules/auth/hooks/use-session';
+import { useSignOut, useCurrentUser } from '@/modules/auth';
 import { bottomNavItems } from '@/config/navigation';
 import { SidebarNavItem } from './SidebarNavItem';
 import { useSidebarStore } from '@/stores/sidebar.store';
