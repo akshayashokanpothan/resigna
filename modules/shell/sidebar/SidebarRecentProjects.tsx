@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarStore } from '@/stores/sidebar.store';
-import { useProjects } from '@/modules/projects/hooks/use-projects';
-import { useFirstWorkspace } from '@/modules/workspace/hooks/use-workspace';
+import { useProjects } from '@/modules/projects';
+import { useFirstWorkspace } from '@/modules/workspace';
 import { cn } from '@/shared/utils/cn';
 import { ROUTES } from '@/shared/constants/routes';
 

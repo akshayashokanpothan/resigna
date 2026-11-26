@@ -1,7 +1,6 @@
 'use client';
 
-import { useCurrentUser } from '@/modules/auth/hooks/use-session';
-import { useSignOut } from '@/modules/auth/hooks/use-sign-out';
+import { useCurrentUser, useSignOut } from '@/modules/auth';
 import { initials } from '@/shared/utils/format';
 import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';

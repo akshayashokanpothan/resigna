@@ -5,7 +5,7 @@ import { env } from '@/config/env';
 const PUBLIC_ROUTES = ['/login', '/signup'];
 const AUTH_ONLY_ROUTES = ['/login', '/signup'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   let response = NextResponse.next({
@@ -31,23 +31,24 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  // Refresh session if expired — required for Server Components
+  // getUser() revalidates the token with Supabase Auth (getSession() only reads the cookie,
+  // which can be spoofed) and refreshes an expired session for Server Components.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route);
   const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some((route) => pathname === route);
 
   // Redirect unauthenticated users to login
-  if (!session && !isPublicRoute) {
+  if (!user && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectedFrom', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users away from auth-only routes
-  if (session && isAuthOnlyRoute) {
+  if (user && isAuthOnlyRoute) {
     return NextResponse.redirect(new URL('/projects', request.url));
   }
 

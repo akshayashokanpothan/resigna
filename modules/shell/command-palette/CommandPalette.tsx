@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X } from 'lucide-react';
 import { useCommandPaletteStore } from '@/stores/command-palette.store';
 import { useKeyboardShortcut } from '@/shared/hooks/use-keyboard-shortcut';
-import { useSignOut } from '@/modules/auth/hooks/use-sign-out';
+import { useSignOut } from '@/modules/auth';
 import { variants, transition } from '@/shared/theme/motion';
 import { cn } from '@/shared/utils/cn';
 import { commandItems, commandGroups } from './command-palette.config';
