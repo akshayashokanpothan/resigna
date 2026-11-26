@@ -1,7 +1,7 @@
 'use client';
 
 import { use } from 'react';
-import { useProject } from '@/modules/projects/hooks/use-projects';
+import { useProject } from '@/modules/projects';
 import { Skeleton } from '@/shared/components/Skeleton';
 import { NotFound } from '@/shared/components/ErrorPage';
 

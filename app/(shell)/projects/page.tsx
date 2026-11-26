@@ -1,8 +1,7 @@
 'use client';
 
-import { useFirstWorkspace } from '@/modules/workspace/hooks/use-workspace';
-import { ProjectList } from '@/modules/projects/components/ProjectList';
-import { ProjectListSkeleton } from '@/modules/projects/components/ProjectListSkeleton';
+import { useFirstWorkspace } from '@/modules/workspace';
+import { ProjectList, ProjectListSkeleton } from '@/modules/projects';
 
 export default function ProjectsPage() {
   const { workspace, isLoading: isWorkspaceLoading } = useFirstWorkspace();

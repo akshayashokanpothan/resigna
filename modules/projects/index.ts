@@ -4,4 +4,5 @@ export type { ProjectRepository } from './repositories/project.repository';
 export { projectsService } from './services/projects.service';
 export { useProjects, useProject } from './hooks/use-projects';
 export { ProjectCard } from './components/ProjectCard';
+export { ProjectList } from './components/ProjectList';
 export { ProjectListSkeleton } from './components/ProjectListSkeleton';
