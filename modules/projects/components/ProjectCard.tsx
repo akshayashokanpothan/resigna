@@ -29,8 +29,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
       {/* Info */}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
-          {project.name}
+        <span className="flex items-center gap-2 truncate text-sm font-medium text-[hsl(var(--foreground))]">
+          <span className="truncate">{project.name}</span>
+          {project.status === 'archived' && (
+            <span className="shrink-0 rounded border border-[hsl(var(--border))] px-1.5 text-xs font-normal text-[hsl(var(--muted-foreground))]">
+              Archived
+            </span>
+          )}
         </span>
         {project.description && (
           <span className="truncate text-xs text-[hsl(var(--muted-foreground))]">

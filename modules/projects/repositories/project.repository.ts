@@ -1,4 +1,4 @@
-import type { Project, CreateProjectInput } from '../types/project.types';
+import type { Project, CreateProjectInput, UpdateProjectInput } from '../types/project.types';
 
 /**
  * Project repository interface.
@@ -8,9 +8,6 @@ export interface ProjectRepository {
   findAll(workspaceId: string): Promise<Project[]>;
   findById(id: string): Promise<Project | null>;
   create(input: CreateProjectInput): Promise<Project>;
-  update(
-    id: string,
-    input: Partial<Pick<Project, 'name' | 'description' | 'status'>>,
-  ): Promise<Project>;
+  update(id: string, input: UpdateProjectInput): Promise<Project>;
   delete(id: string): Promise<void>;
 }

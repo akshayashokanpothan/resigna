@@ -1,5 +1,5 @@
 import { ROUTES } from '@/shared/constants/routes';
-import { FolderOpen, Settings } from 'lucide-react';
+import { FolderOpen, Plus, Settings } from 'lucide-react';
 
 export interface CommandItem {
   id: string;
@@ -26,6 +26,15 @@ export const commandItems: CommandItem[] = [
     group: 'navigation',
     href: ROUTES.settings,
     icon: Settings,
+  },
+
+  // Actions
+  {
+    id: 'new-project',
+    label: 'New project',
+    group: 'actions',
+    action: 'new-project',
+    icon: Plus,
   },
 
   // Account
