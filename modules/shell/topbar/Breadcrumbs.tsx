@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
+import { useProject } from '@/modules/projects';
 import { ROUTES } from '@/shared/constants/routes';
 
 const routeLabels: Record<string, string> = {
@@ -14,19 +15,24 @@ const routeLabels: Record<string, string> = {
 
 export function Breadcrumbs() {
   const pathname = usePathname();
+  const segments = pathname.split('/').filter(Boolean);
+  // On /projects/[id]/…, show the project's name instead of its id.
+  const projectId = segments[0] === 'projects' ? segments[1] : undefined;
+  const { data: project } = useProject(projectId);
 
   if (pathname === ROUTES.home || pathname === ROUTES.projects) {
     return null;
   }
-
-  const segments = pathname.split('/').filter(Boolean);
 
   return (
     <nav aria-label="Breadcrumb">
       <ol className="flex items-center gap-1" role="list">
         {segments.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join('/')}`;
-          const label = routeLabels[segment] ?? segment;
+          const label =
+            index === 1 && segment === projectId
+              ? (project?.name ?? 'Project')
+              : (routeLabels[segment] ?? segment);
           const isLast = index === segments.length - 1;
 
           return (
