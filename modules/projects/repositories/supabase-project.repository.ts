@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { AppError } from '@/shared/errors/AppError';
 import { ErrorCode } from '@/shared/errors/error-codes';
-import type { Project, CreateProjectInput } from '../types/project.types';
+import type { Project, CreateProjectInput, UpdateProjectInput } from '../types/project.types';
 import type { ProjectRepository } from './project.repository';
 
 function mapRow(row: Record<string, unknown>): Project {
@@ -72,10 +72,7 @@ export class SupabaseProjectRepository implements ProjectRepository {
     return mapRow(data as Record<string, unknown>);
   }
 
-  async update(
-    id: string,
-    input: Partial<Pick<Project, 'name' | 'description' | 'status'>>,
-  ): Promise<Project> {
+  async update(id: string, input: UpdateProjectInput): Promise<Project> {
     const { data, error } = await this.supabase
       .from('projects')
       .update({ ...input, updated_at: new Date().toISOString() })
@@ -84,7 +81,11 @@ export class SupabaseProjectRepository implements ProjectRepository {
       .single();
 
     if (error) {
-      throw new AppError({ code: ErrorCode.PROJECT_NOT_FOUND, message: error.message });
+      throw new AppError({
+        code: ErrorCode.PROJECT_UPDATE_FAILED,
+        message: error.message,
+        cause: error,
+      });
     }
 
     return mapRow(data as Record<string, unknown>);

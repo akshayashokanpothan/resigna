@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarStore } from '@/stores/sidebar.store';
-import { useProjects } from '@/modules/projects';
+import { partitionProjectsByStatus, useProjects } from '@/modules/projects';
 import { useFirstWorkspace } from '@/modules/workspace';
 import { cn } from '@/shared/utils/cn';
 import { ROUTES } from '@/shared/constants/routes';
@@ -14,11 +14,11 @@ export function SidebarRecentProjects() {
   const { data: projects } = useProjects(workspace?.id);
   const pathname = usePathname();
 
-  if (isCollapsed || !projects || projects.length === 0) {
+  const recentProjects = partitionProjectsByStatus(projects ?? []).active.slice(0, 5);
+
+  if (isCollapsed || recentProjects.length === 0) {
     return null;
   }
-
-  const recentProjects = projects.slice(0, 5);
 
   return (
     <div className="mt-4 px-2">

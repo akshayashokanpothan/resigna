@@ -1,9 +1,15 @@
 'use client';
 
 import { useFirstWorkspace } from '@/modules/workspace';
-import { ProjectList, ProjectListSkeleton } from '@/modules/projects';
+import {
+  CreateProjectDialog,
+  NewProjectButton,
+  ProjectList,
+  ProjectListSkeleton,
+} from '@/modules/projects';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { NetworkError } from '@/shared/components/ErrorPage';
+import { PageHeader } from '@/shared/components/PageHeader';
 
 export default function ProjectsPage() {
   const {
@@ -15,15 +21,12 @@ export default function ProjectsPage() {
 
   return (
     <div className="mx-auto max-w-3xl p-6">
-      {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-base font-semibold text-[hsl(var(--foreground))]">Projects</h1>
-        <p className="mt-0.5 text-sm text-[hsl(var(--muted-foreground))]">
-          Your research projects live here.
-        </p>
-      </div>
+      <PageHeader
+        title="Projects"
+        description="Your research projects live here."
+        action={<NewProjectButton disabled={!workspace} />}
+      />
 
-      {/* Content */}
       <div className="rounded-lg border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))]">
         {isWorkspaceLoading ? (
           <ProjectListSkeleton count={5} />
@@ -38,6 +41,8 @@ export default function ProjectsPage() {
           />
         )}
       </div>
+
+      <CreateProjectDialog workspaceId={workspace?.id} />
     </div>
   );
 }

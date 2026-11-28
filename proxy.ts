@@ -1,12 +1,31 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { env } from '@/config/env';
+import { resolveHostRoute } from '@/shared/utils/host-routing';
 
 const PUBLIC_ROUTES = ['/login', '/signup'];
 const AUTH_ONLY_ROUTES = ['/login', '/signup'];
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+
+  // Landing page and app live on separate hosts (see shared/utils/host-routing.ts).
+  // The landing page is public, so it skips the Supabase session check entirely.
+  const hostRoute = resolveHostRoute({
+    host: request.headers.get('host'),
+    pathname,
+    search,
+    appUrl: env.NEXT_PUBLIC_APP_URL,
+    landingUrl: env.NEXT_PUBLIC_LANDING_URL,
+  });
+  if (hostRoute.kind === 'redirect') {
+    return NextResponse.redirect(hostRoute.to, 308);
+  }
+  if (hostRoute.kind === 'landing') {
+    return hostRoute.rewriteTo
+      ? NextResponse.rewrite(new URL(hostRoute.rewriteTo, request.url))
+      : NextResponse.next();
+  }
 
   let response = NextResponse.next({
     request: { headers: request.headers },
