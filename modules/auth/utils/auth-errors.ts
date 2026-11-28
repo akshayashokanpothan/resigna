@@ -20,6 +20,9 @@ const CODE_MAP: Record<string, ErrorCode> = {
   over_email_send_rate_limit: ErrorCode.RATE_LIMITED,
   over_request_rate_limit: ErrorCode.RATE_LIMITED,
   over_sms_send_rate_limit: ErrorCode.RATE_LIMITED,
+  otp_expired: ErrorCode.INVALID_OTP,
+  otp_disabled: ErrorCode.SIGNUPS_DISABLED,
+  signup_disabled: ErrorCode.SIGNUPS_DISABLED,
 };
 
 /**
@@ -41,6 +44,9 @@ const MESSAGES: Partial<Record<ErrorCode, string>> = {
   [ErrorCode.EMAIL_ALREADY_REGISTERED]:
     'An account with this email already exists. Try signing in instead.',
   [ErrorCode.WEAK_PASSWORD]: 'That password is too weak. Please choose a stronger one.',
+  [ErrorCode.INVALID_OTP]:
+    'That code is wrong or has expired. Check the latest email or send a new one.',
+  [ErrorCode.SIGNUPS_DISABLED]: 'There is no account for this email yet. Please sign up first.',
   [ErrorCode.RATE_LIMITED]: 'Too many attempts. Please wait a few minutes and try again.',
   [ErrorCode.AUTH_SERVICE_UNAVAILABLE]:
     'Our sign-in service is having trouble right now. Please try again later.',

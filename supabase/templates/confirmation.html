@@ -1,0 +1,22 @@
+<!--
+  Supabase "Confirm signup" email template.
+  Paste into Dashboard → Authentication → Emails → Confirm signup (subject: "Confirm your Resigna account").
+  Also sent when someone new requests a magic link, so it carries the code too.
+-->
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #161616;">
+  <h2 style="margin: 0 0 16px; font-size: 20px;">Confirm your email</h2>
+  <p style="margin: 0 0 24px; font-size: 14px; line-height: 20px;">
+    Welcome to Resigna. Click the button to confirm your email and sign in.
+  </p>
+  <p style="margin: 0 0 24px;">
+    <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email"
+       style="display: inline-block; background: #6e5cf6; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-size: 14px; font-weight: 600;">
+      Confirm and sign in
+    </a>
+  </p>
+  <p style="margin: 0 0 8px; font-size: 14px; line-height: 20px;">Or enter this code on the sign-in page:</p>
+  <p style="margin: 0 0 24px; font-size: 28px; font-weight: 700; letter-spacing: 6px;">{{ .Token }}</p>
+  <p style="margin: 0; font-size: 12px; line-height: 18px; color: #6f6f6f;">
+    If you didn't create a Resigna account, you can ignore this email.
+  </p>
+</div>

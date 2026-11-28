@@ -11,6 +11,8 @@ import type {
 import type { AuthRepository } from './auth.repository';
 import { env } from '@/config/env';
 import { toAuthError } from '../utils/auth-errors';
+import { buildEmailRedirectUrl } from '../utils/email-link';
+import { ROUTES } from '@/shared/constants/routes';
 
 function mapUser(user: {
   id: string;
@@ -72,9 +74,9 @@ export class SupabaseAuthRepository implements AuthRepository {
       password,
       options: {
         data: metadata,
-        // Send the confirmation link through our callback so the code is
-        // exchanged for a session (otherwise it lands on the Site URL root).
-        emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+        // Confirmation links land on /api/auth/confirm, which signs the user in
+        // (otherwise the link would land on the Site URL root).
+        emailRedirectTo: buildEmailRedirectUrl(env.NEXT_PUBLIC_APP_URL, ROUTES.projects),
       },
     });
     if (error) throw toAuthError(error, ErrorCode.SIGNUP_FAILED);
@@ -105,6 +107,33 @@ export class SupabaseAuthRepository implements AuthRepository {
       },
     });
     if (error) throw toAuthError(error, ErrorCode.OAUTH_FAILED);
+  }
+
+  async sendMagicLink(email: string, next: string = ROUTES.projects): Promise<void> {
+    const { error } = await this.supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: buildEmailRedirectUrl(env.NEXT_PUBLIC_APP_URL, next),
+      },
+    });
+    if (error) throw toAuthError(error, ErrorCode.UNKNOWN);
+  }
+
+  async verifyEmailCode(email: string, code: string): Promise<Session> {
+    const { data, error } = await this.supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: 'email',
+    });
+    if (error) throw toAuthError(error, ErrorCode.INVALID_OTP);
+    if (!data.session) throw new AuthError('No session returned', ErrorCode.INVALID_OTP);
+
+    return {
+      user: mapUser(data.session.user),
+      accessToken: data.session.access_token,
+      expiresAt: data.session.expires_at ?? 0,
+    };
   }
 
   async signOut(): Promise<void> {

@@ -46,3 +46,18 @@ export async function createConfirmedUser(prefix?: string): Promise<TestUser> {
   if (error) throw error;
   return user;
 }
+
+/**
+ * What the magic link email would contain, read through the admin API instead of a mailbox:
+ * the 6-digit code and the token hash used by /api/auth/confirm links.
+ */
+export async function generateMagicLink(
+  email: string,
+): Promise<{ code: string; tokenHash: string }> {
+  const { data, error } = await adminClient().auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+  });
+  if (error) throw error;
+  return { code: data.properties.email_otp, tokenHash: data.properties.hashed_token };
+}

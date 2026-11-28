@@ -1,6 +1,6 @@
 # End-to-end tests
 
-Playwright tests for the critical flows: sign up, sign in and out, protected-route redirects, and creating, renaming and archiving a project.
+Playwright tests for the critical flows: sign up, sign in and out, magic link sign-in (code and link), protected-route redirects, and creating, renaming and archiving a project.
 
 They run against the **local Supabase stack**, never the live project. Test users are created through the local admin API, and the helper refuses any Supabase URL that isn't `localhost` or `127.0.0.1`.
 

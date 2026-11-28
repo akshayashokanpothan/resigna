@@ -5,6 +5,17 @@ export const loginSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+export const magicLinkSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+});
+
+export const emailCodeSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6,10}$/, 'Enter the code from the email'),
+});
+
 export const signupSchema = z
   .object({
     name: z.string().min(2, 'Name must be at least 2 characters').max(60),
@@ -19,3 +30,5 @@ export const signupSchema = z
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
+export type MagicLinkInput = z.infer<typeof magicLinkSchema>;
+export type EmailCodeInput = z.infer<typeof emailCodeSchema>;
