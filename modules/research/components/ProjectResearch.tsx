@@ -91,7 +91,9 @@ export function ProjectResearch({ projectId, readOnly = false }: ProjectResearch
   const setTab = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', id);
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    // The native History API updates useSearchParams without a server round trip, so a tab
+    // switch is instant. router.replace would refetch the route from the server on every click.
+    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
   };
 
   const studyList = studies.data ?? [];

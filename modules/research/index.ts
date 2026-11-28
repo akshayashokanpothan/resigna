@@ -19,6 +19,9 @@ export {
   useSources,
   useSource,
   useResearchSearch,
+  usePrefetchProjectResearch,
+  usePrefetchStudy,
+  usePrefetchSource,
 } from './hooks/use-research';
 export { ProjectResearch } from './components/ProjectResearch';
 export { StudyDetail } from './components/StudyDetail';

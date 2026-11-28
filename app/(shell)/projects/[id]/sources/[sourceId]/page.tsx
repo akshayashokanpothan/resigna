@@ -1,13 +1,15 @@
-'use client';
-
-import { use } from 'react';
 import { SourceDetail } from '@/modules/research';
 
-interface SourcePageProps {
-  params: Promise<{ id: string; sourceId: string }>;
+/** Static on first visit; see the note in projects/[id]/page.tsx. */
+export function generateStaticParams() {
+  return [];
 }
 
-export default function SourcePage({ params }: SourcePageProps) {
-  const { id, sourceId } = use(params);
+export default async function SourcePage({
+  params,
+}: {
+  params: Promise<{ id: string; sourceId: string }>;
+}) {
+  const { id, sourceId } = await params;
   return <SourceDetail projectId={id} sourceId={sourceId} />;
 }

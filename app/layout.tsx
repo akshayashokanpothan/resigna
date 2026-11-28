@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { preconnect } from 'react-dom';
+import { env } from '@/config/env';
 import { IBM_Plex_Mono, Inter } from 'next/font/google';
 import { Providers } from '@/providers';
 import { siteConfig } from '@/config/site';
@@ -66,6 +68,10 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Open the TLS connection to Supabase while the page is still loading, so the first data
+  // request doesn't pay for the handshake.
+  preconnect(env.NEXT_PUBLIC_SUPABASE_URL, { crossOrigin: 'anonymous' });
+
   return (
     <html lang="en" className={`${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <body>

@@ -1,9 +1,32 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import type { JWK } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 import { env } from '@/config/env';
 import { resolveHostRoute } from '@/shared/utils/host-routing';
 
 const PUBLIC_ROUTES = ['/login', '/signup'];
+
+/**
+ * Optional pinned copy of the project's public JWT signing keys (the JSON served at
+ * <SUPABASE_URL>/auth/v1/.well-known/jwks.json). The proxy runs at the Vercel edge closest to the
+ * user, and each fresh instance otherwise fetches the keys from Supabase in Sydney first, which
+ * measured 0.7–1 s from Mumbai. These are public keys, not secrets. If Supabase rotates to a key
+ * that isn't listed here, getClaims falls back to fetching the live set, so a stale value only
+ * costs speed, never correctness.
+ */
+const PINNED_JWKS = parseJwks(process.env.SUPABASE_JWKS);
+
+function parseJwks(raw: string | undefined): { keys: JWK[] } | undefined {
+  if (!raw) return undefined;
+  try {
+    const parsed = JSON.parse(raw) as { keys?: unknown };
+    return Array.isArray(parsed.keys) && parsed.keys.length > 0
+      ? { keys: parsed.keys as JWK[] }
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
 const AUTH_ONLY_ROUTES = ['/login', '/signup'];
 
 export async function proxy(request: NextRequest) {
@@ -56,7 +79,10 @@ export async function proxy(request: NextRequest) {
   // getUser() made a network round trip on every navigation and prefetch, which was the main
   // delay after each click. With a legacy shared-secret key, getClaims() falls back to the
   // same Auth server check getUser() did, so it is never less safe.
-  const { data } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims(
+    undefined,
+    PINNED_JWKS ? { jwks: PINNED_JWKS } : undefined,
+  );
   const user = data?.claims?.sub ? data.claims : null;
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route);

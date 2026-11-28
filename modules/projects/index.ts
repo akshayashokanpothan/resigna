@@ -3,7 +3,7 @@ export type { Project, CreateProjectInput, UpdateProjectInput } from './types/pr
 export type { ProjectFormValues } from './schemas/project.schema';
 export type { ProjectRepository } from './repositories/project.repository';
 export { projectsService } from './services/projects.service';
-export { useProjects, useProject } from './hooks/use-projects';
+export { useProjects, useProject, usePrefetchProject } from './hooks/use-projects';
 export { partitionProjectsByStatus } from './domain/project.domain';
 export { useCreateProjectFlow, useProjectActions } from './hooks/use-project-actions';
 export { ProjectCard } from './components/ProjectCard';
