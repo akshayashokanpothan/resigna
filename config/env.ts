@@ -6,6 +6,8 @@ const envSchema = z.object({
     .string()
     .min(1, 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required'),
   NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),
+  /** Landing page URL. Optional: when unset, there is no landing/app host split. */
+  NEXT_PUBLIC_LANDING_URL: z.string().url().optional(),
 });
 
 /**
@@ -18,6 +20,7 @@ function validateEnv() {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || undefined,
+    NEXT_PUBLIC_LANDING_URL: process.env.NEXT_PUBLIC_LANDING_URL || undefined,
   });
 
   if (!result.success) {

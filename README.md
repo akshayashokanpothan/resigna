@@ -69,6 +69,17 @@ Database changes go in a new numbered file in `supabase/migrations/` and are pus
 
 Dependabot opens weekly dependency updates against `dev`.
 
+## Domains
+
+The landing page and the app are served by the same Vercel project on separate hosts. `proxy.ts` picks the site from the request host (see `shared/utils/host-routing.ts`).
+
+| Environment     | Branch | Landing page                           | App                                       |
+| --------------- | ------ | -------------------------------------- | ----------------------------------------- |
+| Production (GA) | `main` | `resigna.akshayashokanpothan.com`      | `app.resigna.akshayashokanpothan.com`     |
+| Preview (BA)    | `dev`  | `beta.resigna.akshayashokanpothan.com` | `appbeta.resigna.akshayashokanpothan.com` |
+
+Set `NEXT_PUBLIC_APP_URL` to the app URL and `NEXT_PUBLIC_LANDING_URL` to the landing URL for each environment. App paths opened on the landing host redirect to the app host. Leave `NEXT_PUBLIC_LANDING_URL` unset locally: everything runs on one host and the landing page is at `/landing`.
+
 ## Read before contributing
 
 - [`ENGINEERING_CONSTITUTION.md`](ENGINEERING_CONSTITUTION.md): rules every change follows
