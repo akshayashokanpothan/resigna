@@ -1,5 +1,6 @@
-import { APP_NAME, APP_TAGLINE } from '@/shared/constants/app.constants';
+import { APP_TAGLINE } from '@/shared/constants/app.constants';
 import { cn } from '@/shared/utils/cn';
+import { LogoSymbol } from '@/shared/components/Logo';
 
 interface AuthCardProps {
   title: string;
@@ -10,18 +11,17 @@ interface AuthCardProps {
 
 export function AuthCard({ title, description, children, className }: AuthCardProps) {
   return (
-    <div className={cn('w-full max-w-sm', className)}>
-      <div className="mb-8 text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
-          {APP_NAME}
-        </h1>
-        <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">{APP_TAGLINE}</p>
+    <div className={cn('w-full', className)}>
+      <div className="mb-8 flex flex-col items-center text-center">
+        <LogoSymbol size={40} />
+        <p className="mt-4 text-2xl font-medium tracking-[-0.04em] text-fg">Resigna</p>
+        <p className="mt-1 type-body text-fg-secondary">{APP_TAGLINE}</p>
       </div>
 
-      <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-sm">
+      <div className="rounded-card border border-border bg-surface p-6">
         <div className="mb-5">
-          <h2 className="text-sm font-medium text-[hsl(var(--foreground))]">{title}</h2>
-          <p className="mt-0.5 text-xs text-[hsl(var(--muted-foreground))]">{description}</p>
+          <h1 className="type-heading-sm text-fg">{title}</h1>
+          <p className="mt-0.5 type-body-sm text-fg-secondary">{description}</p>
         </div>
         {children}
       </div>

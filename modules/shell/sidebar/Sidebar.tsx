@@ -1,66 +1,77 @@
 'use client';
 
+import { useEffect } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useSidebarStore } from '@/stores/sidebar.store';
 import { SidebarNav } from './SidebarNav';
 import { SidebarRecentProjects } from './SidebarRecentProjects';
 import { SidebarFooter } from './SidebarFooter';
 import { cn } from '@/shared/utils/cn';
-import { APP_NAME } from '@/shared/constants/app.constants';
-import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from '@/shared/constants/app.constants';
+import { transition } from '@/shared/theme/motion';
+import { ROUTES } from '@/shared/constants/routes';
+import { IconButton } from '@/shared/components/IconButton';
+import { Logo, LogoSymbol } from '@/shared/components/Logo';
+import { useMediaQuery } from '@/shared/hooks/use-media-query';
 
 export function Sidebar() {
-  const { isCollapsed, toggle, width } = useSidebarStore();
+  const { isCollapsed, toggle, collapse, width } = useSidebarStore();
+  const isNarrow = useMediaQuery('(max-width: 767px)');
+
+  // On small screens the full sidebar would take most of the width, so start collapsed.
+  useEffect(() => {
+    if (isNarrow) collapse();
+  }, [isNarrow, collapse]);
 
   return (
     <motion.aside
       animate={{ width }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className={cn(
-        'relative flex h-full shrink-0 flex-col',
-        'border-r border-[hsl(var(--border))] bg-[hsl(var(--card))]',
-        'overflow-hidden',
-      )}
-      style={{ minWidth: isCollapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH }}
+      initial={false}
+      transition={transition.default}
+      className="relative flex h-full shrink-0 flex-col overflow-hidden border-r border-border bg-surface"
       aria-label="Application sidebar"
     >
-      {/* Logo + Collapse button */}
-      <div className="flex h-12 items-center justify-between px-3 border-b border-[hsl(var(--border))]">
-        {!isCollapsed && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.05 }}
-            className="text-sm font-semibold tracking-tight text-[hsl(var(--foreground))]"
-          >
-            {APP_NAME}
-          </motion.span>
+      {/* Brand + collapse */}
+      <div
+        className={cn(
+          'flex h-12 shrink-0 items-center border-b border-border',
+          isCollapsed ? 'justify-center px-2' : 'justify-between pl-4 pr-2',
         )}
-
-        <button
+      >
+        {!isCollapsed && (
+          <Link
+            href={ROUTES.projects}
+            aria-label="Resigna — go to Projects"
+            className="rounded-sm focus-ring"
+          >
+            <Logo height={20} />
+          </Link>
+        )}
+        <IconButton
+          icon={isCollapsed ? PanelLeftOpen : PanelLeftClose}
+          label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          tooltipSide="right"
+          size="sm"
           onClick={toggle}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className={cn(
-            'rounded-md p-1.5 text-[hsl(var(--muted-foreground))] transition-colors',
-            'hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1',
-            'focus-visible:outline-[hsl(var(--primary))]',
-            isCollapsed && 'mx-auto',
-          )}
-        >
-          <PanelLeft size={16} aria-hidden="true" />
-        </button>
+          aria-expanded={!isCollapsed}
+        />
       </div>
 
+      {isCollapsed && (
+        <div className="flex justify-center pt-3" aria-hidden="true">
+          <LogoSymbol size={20} title="" />
+        </div>
+      )}
+
       {/* Nav content */}
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden p-2">
+      <div className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-2 py-3">
         <SidebarNav />
         <SidebarRecentProjects />
       </div>
 
       {/* Footer */}
-      <div className="p-2">
+      <div className="px-2 pb-2">
         <SidebarFooter />
       </div>
     </motion.aside>

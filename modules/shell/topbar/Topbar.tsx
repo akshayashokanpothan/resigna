@@ -3,9 +3,11 @@
 import { Bell, Search } from 'lucide-react';
 import { useCommandPaletteStore } from '@/stores/command-palette.store';
 import { useKeyboardShortcut } from '@/shared/hooks/use-keyboard-shortcut';
+import { IconButton } from '@/shared/components/IconButton';
+import { Kbd } from '@/shared/components/Kbd';
+import { cn } from '@/shared/utils/cn';
 import { Breadcrumbs } from './Breadcrumbs';
 import { UserMenu } from './UserMenu';
-import { cn } from '@/shared/utils/cn';
 
 export function Topbar() {
   const { open } = useCommandPaletteStore();
@@ -13,53 +15,32 @@ export function Topbar() {
   useKeyboardShortcut({ key: 'k', meta: true }, open);
 
   return (
-    <header
-      className={cn(
-        'flex h-12 shrink-0 items-center justify-between',
-        'border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]',
-        'px-4',
-      )}
-    >
+    <header className="flex h-12 shrink-0 items-center justify-between gap-4 border-b border-border bg-canvas px-4">
       {/* Left — breadcrumbs */}
       <div className="flex min-w-0 items-center">
         <Breadcrumbs />
       </div>
 
       {/* Right — actions */}
-      <div className="flex items-center gap-1">
-        {/* Search / Command Palette trigger */}
+      <div className="flex items-center gap-1.5">
         <button
+          type="button"
           onClick={open}
-          aria-label="Open command palette (⌘K)"
+          aria-label="Search and commands"
+          aria-keyshortcuts="Meta+K"
           className={cn(
-            'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs',
-            'text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))]',
-            'hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))] transition-colors',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1',
-            'focus-visible:outline-[hsl(var(--primary))]',
+            'flex h-8 w-56 items-center gap-2 rounded-control border border-border bg-surface px-2.5 text-sm focus-ring',
+            'text-fg-secondary transition-colors duration-fast ease-standard',
+            'hover:border-border-strong hover:text-fg max-sm:w-auto',
           )}
         >
-          <Search size={13} aria-hidden="true" />
-          <span className="hidden sm:inline">Search</span>
-          <kbd className="hidden sm:inline ml-1 font-mono text-[10px] text-[hsl(var(--muted-foreground))]">
-            ⌘K
-          </kbd>
+          <Search size={14} aria-hidden="true" />
+          <span className="flex-1 text-left max-sm:hidden">Search</span>
+          <Kbd className="max-sm:hidden">⌘K</Kbd>
         </button>
 
-        {/* Notifications placeholder */}
-        <button
-          aria-label="Notifications (coming soon)"
-          title="Notifications — coming soon"
-          disabled
-          className={cn(
-            'rounded-md p-2 text-[hsl(var(--muted-foreground))]',
-            'disabled:cursor-not-allowed disabled:opacity-40',
-          )}
-        >
-          <Bell size={16} aria-hidden="true" />
-        </button>
+        <IconButton icon={Bell} label="Notifications — coming soon" disabled />
 
-        {/* User menu */}
         <UserMenu />
       </div>
     </header>

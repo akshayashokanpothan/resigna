@@ -3,7 +3,13 @@
 import { use, useState } from 'react';
 import { Archive, ArchiveRestore, Pencil } from 'lucide-react';
 import { EditProjectDialog, useProject, useProjectActions } from '@/modules/projects';
-import { Button } from '@/shared/components/Button';
+import Link from 'next/link';
+import { Badge } from '@/shared/components/Badge';
+import { Button, buttonVariants } from '@/shared/components/Button';
+import { Card } from '@/shared/components/Card';
+import { EmptyState } from '@/shared/components/EmptyState';
+import { Notification } from '@/shared/components/Notification';
+import { ROUTES } from '@/shared/constants/routes';
 import { PageHeader } from '@/shared/components/PageHeader';
 import { Skeleton } from '@/shared/components/Skeleton';
 import { NetworkError, NotFound } from '@/shared/components/ErrorPage';
@@ -25,9 +31,11 @@ function ProjectDetailContent({ projectId }: { projectId: string }) {
 
   if (isLoading) {
     return (
-      <div className="p-6 max-w-3xl mx-auto">
-        <Skeleton className="h-5 w-48 mb-2" />
-        <Skeleton className="h-4 w-72" />
+      <div className="mx-auto max-w-5xl px-8 py-8" role="status" aria-live="polite">
+        <span className="sr-only">Loading project</span>
+        <Skeleton className="mb-3 h-7 w-64" />
+        <Skeleton className="mb-8 h-4 w-96" />
+        <Skeleton className="h-64 w-full rounded-card" />
       </div>
     );
   }
@@ -37,52 +45,63 @@ function ProjectDetailContent({ projectId }: { projectId: string }) {
   }
 
   if (!project) {
-    return <NotFound resource="Project" />;
+    return (
+      <NotFound
+        resource="Project"
+        action={
+          <Link href={ROUTES.projects} className={buttonVariants({ variant: 'secondary' })}>
+            Back to projects
+          </Link>
+        }
+      />
+    );
   }
 
   const isArchived = project.status === 'archived';
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="mx-auto max-w-5xl px-8 py-8">
       <PageHeader
         title={project.name}
+        eyebrow="Project"
         description={project.description ?? undefined}
+        meta={isArchived ? <Badge>Archived</Badge> : undefined}
         action={
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setIsEditing(true)} disabled={isPending}>
-              <Pencil size={14} aria-hidden="true" />
+          <>
+            <Button
+              variant="secondary"
+              leadingIcon={Pencil}
+              onClick={() => setIsEditing(true)}
+              disabled={isPending}
+            >
               Edit
             </Button>
             <Button
               variant="secondary"
+              leadingIcon={isArchived ? ArchiveRestore : Archive}
               onClick={() => setArchived(!isArchived)}
               disabled={isPending}
             >
-              {isArchived ? (
-                <ArchiveRestore size={14} aria-hidden="true" />
-              ) : (
-                <Archive size={14} aria-hidden="true" />
-              )}
               {isArchived ? 'Restore' : 'Archive'}
             </Button>
-          </div>
+          </>
         }
       />
 
       {isArchived && (
-        <p
-          role="status"
-          className="mb-4 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 py-2 text-sm text-[hsl(var(--muted-foreground))]"
-        >
-          This project is archived. Restore it to keep working on it.
-        </p>
+        <Notification tone="info" title="This project is archived" className="mb-6">
+          It is read-only and hidden from your active projects. Restore it to keep working on it.
+        </Notification>
       )}
 
-      <div className="rounded-lg border border-[hsl(var(--border))] border-dashed p-12 text-center">
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">
-          Research workspace — coming in Sprint 1
-        </p>
-      </div>
+      <Card padding="none">
+        <EmptyState
+          illustration="no-research"
+          title="Research workspace is coming next"
+          description="Soon you'll upload or paste interview transcripts and notes here, and pull evidence out of them."
+          action={<Badge tone="accent">Next release</Badge>}
+        />
+      </Card>
 
       <EditProjectDialog project={project} open={isEditing} onClose={() => setIsEditing(false)} />
     </div>

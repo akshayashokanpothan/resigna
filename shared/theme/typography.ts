@@ -1,41 +1,26 @@
 /**
- * Resigna Typography Tokens
+ * Resigna typography — Inter for product UI, IBM Plex Mono for data, IDs and code.
+ * Fraunces is marketing-only and must never appear in the product.
+ * Use the type-* utilities from app/globals.css (type-heading-md, type-body, type-label…).
  */
 
 export const fontFamily = {
-  sans: 'var(--font-inter)',
+  sans: 'var(--font-sans)',
   mono: 'var(--font-mono)',
 } as const;
 
-export const fontSize = {
-  xs: '0.6875rem', // 11px
-  sm: '0.8125rem', // 13px
-  base: '0.875rem', // 14px
-  md: '0.9375rem', // 15px
-  lg: '1rem', // 16px
-  xl: '1.125rem', // 18px
-  '2xl': '1.25rem', // 20px
-  '3xl': '1.5rem', // 24px
-  '4xl': '2rem', // 32px
+/** Type roles: [font-size, line-height, weight]. Matches the @utility type-* rules. */
+export const typeScale = {
+  display: ['32px', '40px', 600],
+  headingLg: ['24px', '32px', 600],
+  headingMd: ['20px', '28px', 600],
+  headingSm: ['16px', '24px', 600],
+  body: ['14px', '20px', 400],
+  bodySm: ['13px', '18px', 400],
+  label: ['12px', '16px', 500],
+  caption: ['12px', '16px', 400],
+  overline: ['11px', '16px', 600],
+  code: ['12px', '16px', 400],
 } as const;
 
-export const fontWeight = {
-  regular: '400',
-  medium: '500',
-  semibold: '600',
-  bold: '700',
-} as const;
-
-export const lineHeight = {
-  tight: '1.25',
-  snug: '1.375',
-  normal: '1.5',
-  relaxed: '1.625',
-} as const;
-
-export const letterSpacing = {
-  tight: '-0.02em',
-  normal: '0em',
-  wide: '0.02em',
-  wider: '0.05em',
-} as const;
+export type TypeRole = keyof typeof typeScale;

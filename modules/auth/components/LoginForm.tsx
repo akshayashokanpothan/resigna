@@ -8,7 +8,9 @@ import { loginSchema, type LoginInput } from '../schemas/auth.schema';
 import { getAuthService } from '../services/auth.service';
 import { ROUTES } from '@/shared/constants/routes';
 import { toast } from '@/shared/utils/toast';
-import { cn } from '@/shared/utils/cn';
+import { Button } from '@/shared/components/Button';
+import { Field } from '@/shared/components/Field';
+import { Input } from '@/shared/components/Input';
 import { safeRedirectPath } from '@/shared/utils/redirect';
 import { getAuthErrorMessage } from '../utils/auth-errors';
 
@@ -54,65 +56,37 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-[hsl(var(--foreground))]">
-          Email
-        </label>
-        <input
-          id="email"
+      <Field id="email" label="Email" error={errors.email?.message}>
+        <Input
           type="email"
+          size="lg"
           autoComplete="email"
           autoFocus
           placeholder="you@company.com"
           {...register('email')}
-          className={cn(
-            'h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none transition-colors',
-            'border-[hsl(var(--border))] text-[hsl(var(--foreground))]',
-            'placeholder:text-[hsl(var(--muted-foreground))]',
-            'focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]',
-            errors.email && 'border-[hsl(var(--destructive))]',
-          )}
         />
-        {errors.email && (
-          <p className="text-xs text-[hsl(var(--destructive))]">{errors.email.message}</p>
-        )}
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-[hsl(var(--foreground))]">
-          Password
-        </label>
-        <input
-          id="password"
+      <Field id="password" label="Password" error={errors.password?.message}>
+        <Input
           type="password"
+          size="lg"
           autoComplete="current-password"
           placeholder="••••••••"
           {...register('password')}
-          className={cn(
-            'h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none transition-colors',
-            'border-[hsl(var(--border))] text-[hsl(var(--foreground))]',
-            'placeholder:text-[hsl(var(--muted-foreground))]',
-            'focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]',
-            errors.password && 'border-[hsl(var(--destructive))]',
-          )}
         />
-        {errors.password && (
-          <p className="text-xs text-[hsl(var(--destructive))]">{errors.password.message}</p>
-        )}
-      </div>
+      </Field>
 
-      <button
+      <Button
         type="submit"
-        disabled={isLoading}
-        className={cn(
-          'mt-1 h-9 w-full rounded-md bg-[hsl(var(--primary))] px-4 text-sm font-medium',
-          'text-[hsl(var(--primary-foreground))] transition-opacity',
-          'hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-          'focus-visible:outline-[hsl(var(--primary))] disabled:cursor-not-allowed disabled:opacity-50',
-        )}
+        size="lg"
+        fullWidth
+        isLoading={isLoading}
+        loadingText="Signing in…"
+        className="mt-1"
       >
-        {isLoading ? 'Signing in…' : 'Sign in'}
-      </button>
+        Sign in
+      </Button>
     </form>
   );
 }

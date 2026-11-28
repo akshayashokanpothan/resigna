@@ -11,4 +11,5 @@ export const ROUTES = {
   projects: '/projects',
   project: (id: string) => `/projects/${id}`,
   settings: '/settings',
+  designSystem: '/design-system',
 } as const;

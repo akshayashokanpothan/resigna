@@ -20,14 +20,14 @@ export default function ProjectsPage() {
   } = useFirstWorkspace();
 
   return (
-    <div className="mx-auto max-w-3xl p-6">
+    <div className="mx-auto max-w-5xl px-8 py-8">
       <PageHeader
         title="Projects"
-        description="Your research projects live here."
+        description="Each project holds the research for one study: its sources, evidence and insights."
         action={<NewProjectButton disabled={!workspace} />}
       />
 
-      <div className="rounded-lg border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))]">
+      <div className="overflow-hidden rounded-card border border-border bg-surface">
         {isWorkspaceLoading ? (
           <ProjectListSkeleton count={5} />
         ) : isWorkspaceError ? (

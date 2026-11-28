@@ -1,5 +1,5 @@
 import { ROUTES } from '@/shared/constants/routes';
-import { FolderOpen, Plus, Settings } from 'lucide-react';
+import { FolderKanban, Palette, Plus, Settings } from 'lucide-react';
 
 export interface CommandItem {
   id: string;
@@ -18,7 +18,7 @@ export const commandItems: CommandItem[] = [
     label: 'Go to Projects',
     group: 'navigation',
     href: ROUTES.projects,
-    icon: FolderOpen,
+    icon: FolderKanban,
   },
   {
     id: 'go-settings',
@@ -26,6 +26,13 @@ export const commandItems: CommandItem[] = [
     group: 'navigation',
     href: ROUTES.settings,
     icon: Settings,
+  },
+  {
+    id: 'go-design-system',
+    label: 'Open design system reference',
+    group: 'navigation',
+    href: ROUTES.designSystem,
+    icon: Palette,
   },
 
   // Actions

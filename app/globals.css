@@ -1,95 +1,283 @@
 @import 'tailwindcss';
 
 /*
- * Resigna Design Tokens — Dark Mode First
- * All CSS variables are consumed by components via Tailwind utility classes.
- * Never hardcode hex values in components — always use hsl(var(--token)).
+ * Resigna design tokens — v1.0 (brand kit "Claude Handoff Kit v1.0", product vision §13–14).
  *
- * Token naming follows shadcn/ui conventions for compatibility.
+ * Three tiers, IBM Carbon style:
+ *   1. Brand primitives (--resigna-*): the raw values from the brand kit. Never used by components.
+ *   2. Semantic tokens (--color-*, --radius-*, --font-*, --shadow-*, --ease-*): what a value is FOR.
+ *      Tailwind turns each into a utility class: bg-surface, text-fg-secondary, rounded-control…
+ *   3. Component recipes in shared/components use only semantic utilities.
+ *
+ * Tailwind's default palette, radii and shadows are switched off below, so a class like
+ * bg-blue-500 or rounded-lg does not exist and cannot drift from the brand.
+ * Docs: docs/design-system/README.md · Live reference: /design-system
  */
 
-@layer base {
-  :root {
-    /* ─── Backgrounds ──────────────────────────────────── */
-    --background: 224 10% 6%; /* #0d0e11 — near-black page bg */
-    --foreground: 210 20% 92%; /* #e4e8ef — primary text */
+/* ── 1. Brand primitives ─────────────────────────────────────────────────────── */
+:root {
+  --resigna-bg: #0b0d12;
+  --resigna-surface: #11151c;
+  --resigna-surface-elevated: #181d26;
+  --resigna-border: #262d39;
+  --resigna-text-primary: #f5f7fa;
+  --resigna-text-secondary: #9aa5b1;
+  --resigna-text-muted: #6b7280;
+  --resigna-accent: #6e5cf6;
+  --resigna-accent-hover: #7c6cff;
+  --resigna-success: #22c55e;
+  --resigna-warning: #f59e0b;
+  --resigna-danger: #ef4444;
+  --resigna-info: #3b82f6;
 
-    /* ─── Card / Surface ───────────────────────────────── */
-    --card: 224 10% 9%; /* #131519 — elevated surface */
-    --card-foreground: 210 20% 92%;
+  /* Derived steps, added so every text and control pairing passes WCAG 2.2 AA.
+     Each one is documented with its contrast ratio in docs/design-system/README.md. */
+  --resigna-gray-hover: #1c222c;
+  --resigna-gray-selected: #222936;
+  --resigna-gray-strong: #636d7e; /* 3.2:1+ on every surface: control borders (WCAG 1.4.11) */
+  --resigna-accent-pressed: #5e4de8;
+  --resigna-accent-light: #8b7cff; /* accent as text: 5.2:1+ on every surface */
+  --resigna-danger-strong: #dc2626; /* white text 4.8:1 */
+  --resigna-danger-stronger: #b91c1c;
+  --resigna-danger-light: #f87171;
+  --resigna-info-light: #60a5fa;
+  --resigna-white: #ffffff;
+}
 
-    /* ─── Popover ──────────────────────────────────────── */
-    --popover: 224 10% 10%;
-    --popover-foreground: 210 20% 92%;
+/* ── 2. Semantic tokens → Tailwind utilities ─────────────────────────────────── */
+@theme inline {
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
 
-    /* ─── Primary (Accent) ─────────────────────────────── */
-    --primary: 243 75% 65%; /* #6366f1 — restrained indigo */
-    --primary-foreground: 0 0% 100%;
+  /* Layers: canvas → surface → surface-raised. Hover and selected are overlays on any layer. */
+  --color-canvas: var(--resigna-bg);
+  --color-surface: var(--resigna-surface);
+  --color-surface-raised: var(--resigna-surface-elevated);
+  --color-layer-hover: var(--resigna-gray-hover);
+  --color-layer-selected: var(--resigna-gray-selected);
+  --color-overlay: rgb(5 6 9 / 0.72);
 
-    /* ─── Secondary ────────────────────────────────────── */
-    --secondary: 224 10% 14%;
-    --secondary-foreground: 210 20% 92%;
+  /* Borders: subtle dividers vs. strong control outlines */
+  --color-border: var(--resigna-border);
+  --color-border-strong: var(--resigna-gray-strong);
 
-    /* ─── Muted ────────────────────────────────────────── */
-    --muted: 224 10% 13%; /* subtle backgrounds */
-    --muted-foreground: 215 16% 55%; /* de-emphasized text */
+  /* Text */
+  --color-fg: var(--resigna-text-primary);
+  --color-fg-secondary: var(--resigna-text-secondary);
+  --color-fg-muted: var(--resigna-text-muted); /* placeholder and disabled only — 4.0:1 */
+  --color-on-accent: var(--resigna-white);
 
-    /* ─── Accent ───────────────────────────────────────── */
-    --accent: 224 10% 14%;
-    --accent-foreground: 210 20% 92%;
+  /* Action / signal (Electric Indigo) */
+  --color-accent: var(--resigna-accent);
+  --color-accent-hover: var(--resigna-accent-pressed);
+  --color-accent-active: var(--resigna-accent-pressed);
+  --color-accent-text: var(--resigna-accent-light);
+  --color-accent-subtle: rgb(110 92 246 / 0.14);
+  --color-accent-border: rgb(124 108 255 / 0.45);
+  --color-focus: var(--resigna-accent-light);
 
-    /* ─── Destructive ──────────────────────────────────── */
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+  /* Status — solid for icons/dots, -text for copy, -subtle for tinted backgrounds */
+  --color-success: var(--resigna-success);
+  --color-success-text: var(--resigna-success);
+  --color-success-subtle: rgb(34 197 94 / 0.12);
+  --color-warning: var(--resigna-warning);
+  --color-warning-text: var(--resigna-warning);
+  --color-warning-subtle: rgb(245 158 11 / 0.12);
+  --color-danger: var(--resigna-danger);
+  --color-danger-text: var(--resigna-danger-light);
+  --color-danger-subtle: rgb(239 68 68 / 0.12);
+  --color-danger-solid: var(--resigna-danger-strong);
+  --color-danger-solid-hover: var(--resigna-danger-stronger);
+  --color-info: var(--resigna-info);
+  --color-info-text: var(--resigna-info-light);
+  --color-info-subtle: rgb(59 130 246 / 0.12);
 
-    /* ─── Border / Input / Ring ────────────────────────── */
-    --border: 224 10% 16%; /* subtle border */
-    --input: 224 10% 14%;
-    --ring: 243 75% 65%;
+  /* Typography */
+  --font-sans: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
 
-    /* ─── Radius ───────────────────────────────────────── */
-    --radius: 0.5rem; /* 8px base radius */
+  /* Radius — 10 controls, 16 cards, 20 dialogs, pill */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-dialog: 20px;
+  --radius-pill: 999px;
+
+  /* Elevation — borders first; shadows only for things that float */
+  --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.32);
+  --shadow-overlay: 0 12px 32px -8px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.32);
+
+  /* Motion — 150 / 200 / 300 ms, no bounce */
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --ease-entrance: cubic-bezier(0, 0, 0.38, 0.9);
+  --ease-exit: cubic-bezier(0.2, 0, 1, 0.9);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0.38, 0.9);
+
+  --animate-skeleton: skeleton 1.6s var(--ease-standard) infinite;
+  @keyframes skeleton {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
   }
 }
 
+:root {
+  --motion-fast: 150ms;
+  --motion-standard: 200ms;
+  --motion-slow: 300ms;
+}
+
+@utility duration-fast {
+  --tw-duration: var(--motion-fast);
+  transition-duration: var(--motion-fast);
+}
+@utility duration-standard {
+  --tw-duration: var(--motion-standard);
+  transition-duration: var(--motion-standard);
+}
+@utility duration-slow {
+  --tw-duration: var(--motion-slow);
+  transition-duration: var(--motion-slow);
+}
+
+/* Shared focus ring: 2px focus colour, 2px gap, on keyboard focus only */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+@utility focus-ring-inset {
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+}
+
+/* ── Type roles (productive scale, Inter) ───────────────────────────────────── */
+@utility type-display {
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@utility type-heading-lg {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+@utility type-heading-md {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility type-heading-sm {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+@utility type-body {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+}
+@utility type-body-sm {
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+}
+@utility type-label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+@utility type-caption {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+}
+@utility type-overline {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+@utility type-code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
 @layer base {
   * {
-    border-color: hsl(var(--border));
-    box-sizing: border-box;
+    border-color: var(--color-border);
   }
 
   html {
+    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-size: 0.875rem; /* 14px — Information-dense like Linear */
-    line-height: 1.5;
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
-  /* Custom scrollbar — minimal, dark */
+  ::selection {
+    background: var(--color-accent-subtle);
+    color: var(--color-fg);
+  }
+
   ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 9999px;
+    background: var(--color-border);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.5);
+    background-color: var(--color-border-strong);
   }
 
-  /* Focus visible — consistent across all interactive elements */
   :focus-visible {
-    outline: 2px solid hsl(var(--ring));
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+  }
+
+  /* Honour the OS "reduce motion" setting everywhere */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
