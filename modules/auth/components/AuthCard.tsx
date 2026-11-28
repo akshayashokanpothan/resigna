@@ -1,6 +1,7 @@
 import { APP_TAGLINE } from '@/shared/constants/app.constants';
 import { cn } from '@/shared/utils/cn';
 import { LogoSymbol } from '@/shared/components/Logo';
+import { BetaBadge } from '@/shared/components/BetaBadge';
 
 interface AuthCardProps {
   title: string;
@@ -14,7 +15,10 @@ export function AuthCard({ title, description, children, className }: AuthCardPr
     <div className={cn('w-full', className)}>
       <div className="mb-8 flex flex-col items-center text-center">
         <LogoSymbol size={40} />
-        <p className="mt-4 text-2xl font-medium tracking-[-0.04em] text-fg">Resigna</p>
+        <p className="mt-4 flex items-center gap-2 text-2xl font-medium tracking-[-0.04em] text-fg">
+          Resigna
+          <BetaBadge />
+        </p>
         <p className="mt-1 type-body text-fg-secondary">{APP_TAGLINE}</p>
       </div>
 

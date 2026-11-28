@@ -3,6 +3,8 @@ import { IBM_Plex_Mono, Inter } from 'next/font/google';
 import { Providers } from '@/providers';
 import { siteConfig } from '@/config/site';
 import { brandPalette } from '@/shared/theme/colors';
+import { IS_BETA } from '@/shared/constants/release';
+import { BetaStrip } from '@/shared/components/BetaBadge';
 import './globals.css';
 
 const inter = Inter({
@@ -39,6 +41,22 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
   },
+  // Beta builds get a favicon with an amber dot so BA tabs stand out from GA tabs.
+  icons: IS_BETA
+    ? {
+        icon: [
+          { url: '/brand/icons/favicon-beta.ico', sizes: 'any' },
+          { url: '/brand/icons/icon-32-beta.png', type: 'image/png', sizes: '32x32' },
+        ],
+        apple: '/brand/icons/apple-icon-180-beta.png',
+      }
+    : {
+        icon: [
+          { url: '/brand/icons/favicon.ico', sizes: 'any' },
+          { url: '/brand/icons/icon-32.png', type: 'image/png', sizes: '32x32' },
+        ],
+        apple: '/brand/icons/apple-icon-180.png',
+      },
   robots: { index: false, follow: false }, // Will enable on launch
 };
 
@@ -51,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <body>
+        {IS_BETA && <BetaStrip />}
         <Providers>{children}</Providers>
       </body>
     </html>

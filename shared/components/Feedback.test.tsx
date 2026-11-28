@@ -5,6 +5,7 @@ import { Badge, Tag } from './Badge';
 import { Notification } from './Notification';
 import { Logo, LogoSymbol } from './Logo';
 import { IconButton } from './IconButton';
+import { APP_DISPLAY_NAME } from '@/shared/constants/app.constants';
 import { Search } from 'lucide-react';
 
 describe('Notification', () => {
@@ -58,11 +59,19 @@ describe('Logo and IconButton', () => {
         <LogoSymbol title="" />
       </>,
     );
-    expect(screen.getAllByRole('img', { name: 'Resigna' })).toHaveLength(1);
+    expect(screen.getAllByRole('img', { name: APP_DISPLAY_NAME })).toHaveLength(1);
   });
 
   it('icon buttons are named by their label', () => {
     render(<IconButton icon={Search} label="Search" />);
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+  });
+});
+
+describe('Beta marks (tests run as a non-production build)', () => {
+  it('names the product "Resigna Beta" and shows a Beta badge next to the logo', () => {
+    expect(APP_DISPLAY_NAME).toBe('Resigna Beta');
+    render(<Logo />);
+    expect(screen.getByText('Beta')).toBeInTheDocument();
   });
 });
