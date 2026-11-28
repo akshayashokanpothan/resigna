@@ -6,8 +6,8 @@ const prod = {
   landingUrl: 'https://resigna.akshayashokanpothan.com',
 };
 const preview = {
-  appUrl: 'https://resigna-app.vercel.app',
-  landingUrl: 'https://resigna.vercel.app',
+  appUrl: 'https://appbeta.resigna.akshayashokanpothan.com',
+  landingUrl: 'https://beta.resigna.akshayashokanpothan.com',
 };
 
 describe('resolveHostRoute', () => {
@@ -21,7 +21,12 @@ describe('resolveHostRoute', () => {
       }),
     ).toEqual({ kind: 'landing', rewriteTo: '/landing' });
     expect(
-      resolveHostRoute({ ...preview, host: 'resigna.vercel.app', pathname: '/', search: '' }),
+      resolveHostRoute({
+        ...preview,
+        host: 'beta.resigna.akshayashokanpothan.com',
+        pathname: '/',
+        search: '',
+      }),
     ).toEqual({ kind: 'landing', rewriteTo: '/landing' });
   });
 
@@ -38,8 +43,13 @@ describe('resolveHostRoute', () => {
       to: 'https://app.resigna.akshayashokanpothan.com/projects/123?tab=notes',
     });
     expect(
-      resolveHostRoute({ ...preview, host: 'resigna.vercel.app', pathname: '/login', search: '' }),
-    ).toEqual({ kind: 'redirect', to: 'https://resigna-app.vercel.app/login' });
+      resolveHostRoute({
+        ...preview,
+        host: 'beta.resigna.akshayashokanpothan.com',
+        pathname: '/login',
+        search: '',
+      }),
+    ).toEqual({ kind: 'redirect', to: 'https://appbeta.resigna.akshayashokanpothan.com/login' });
   });
 
   it('serves the app on the app host', () => {
@@ -59,11 +69,11 @@ describe('resolveHostRoute', () => {
     expect(
       resolveHostRoute({
         ...preview,
-        host: 'resigna-app.vercel.app',
+        host: 'appbeta.resigna.akshayashokanpothan.com',
         pathname: '/landing',
         search: '',
       }),
-    ).toEqual({ kind: 'redirect', to: 'https://resigna.vercel.app/' });
+    ).toEqual({ kind: 'redirect', to: 'https://beta.resigna.akshayashokanpothan.com/' });
   });
 
   it('treats unknown hosts (per-branch previews) as the app, with /landing viewable', () => {

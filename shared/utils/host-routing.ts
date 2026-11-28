@@ -3,7 +3,7 @@
  * live on separate hosts:
  *
  *   Production  landing resigna.akshayashokanpothan.com   app app.resigna.akshayashokanpothan.com
- *   Preview     landing resigna.vercel.app               app resigna-app.vercel.app
+ *   Preview     landing beta.resigna.akshayashokanpothan.com  app appbeta.resigna.akshayashokanpothan.com
  *
  * When NEXT_PUBLIC_LANDING_URL is not set (local dev, CI) there is no split:
  * every host is the app, and the landing page is still reachable at /landing.
@@ -22,7 +22,7 @@ export type HostRoute =
   | { kind: 'redirect'; to: string };
 
 interface ResolveHostRouteInput {
-  /** The request's Host header, e.g. `resigna.vercel.app` or `localhost:3000`. */
+  /** The request's Host header, e.g. `beta.resigna.akshayashokanpothan.com` or `localhost:3000`. */
   host: string | null;
   pathname: string;
   search: string;

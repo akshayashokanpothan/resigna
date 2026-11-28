@@ -31,10 +31,10 @@ Apply the SQL in `supabase/migrations/` to your Supabase project in order.
 
 The landing page and the app are served by the same Vercel project on separate hosts. `proxy.ts` picks the site from the request host (see `shared/utils/host-routing.ts`).
 
-| Environment     | Branch | Landing page                      | App                                   |
-| --------------- | ------ | --------------------------------- | ------------------------------------- |
-| Production (GA) | `main` | `resigna.akshayashokanpothan.com` | `app.resigna.akshayashokanpothan.com` |
-| Preview (BA)    | `dev`  | `resigna.vercel.app`              | `resigna-app.vercel.app`              |
+| Environment     | Branch | Landing page                           | App                                       |
+| --------------- | ------ | -------------------------------------- | ----------------------------------------- |
+| Production (GA) | `main` | `resigna.akshayashokanpothan.com`      | `app.resigna.akshayashokanpothan.com`     |
+| Preview (BA)    | `dev`  | `beta.resigna.akshayashokanpothan.com` | `appbeta.resigna.akshayashokanpothan.com` |
 
 Set `NEXT_PUBLIC_APP_URL` to the app URL and `NEXT_PUBLIC_LANDING_URL` to the landing URL for each environment. App paths opened on the landing host redirect to the app host. Leave `NEXT_PUBLIC_LANDING_URL` unset locally: everything runs on one host and the landing page is at `/landing`.
 
