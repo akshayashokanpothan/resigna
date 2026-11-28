@@ -7,6 +7,7 @@ import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';
 import { formatRelativeDate } from '@/shared/utils/format';
 import { formatDay, STUDY_METHOD_LABELS, STUDY_STATUS_META } from '../domain/research.domain';
+import { usePrefetchStudy } from '../hooks/use-research';
 import type { ResearchSourceSummary, Study } from '../types/research.types';
 
 export function studyDateRange(study: Pick<Study, 'startsOn' | 'endsOn'>): string | null {
@@ -24,6 +25,7 @@ interface StudyListProps {
 
 export function StudyList({ studies, sources }: StudyListProps) {
   const sourceCount = (studyId: string) => sources.filter((s) => s.studyId === studyId).length;
+  const prefetchStudy = usePrefetchStudy();
 
   return (
     <ul role="list" aria-label="Studies" className="flex flex-col">
@@ -35,6 +37,8 @@ export function StudyList({ studies, sources }: StudyListProps) {
           <li key={study.id} className="border-b border-border last:border-b-0">
             <Link
               href={ROUTES.study(study.projectId, study.id)}
+              onPointerEnter={() => prefetchStudy(study.projectId, study.id)}
+              onFocus={() => prefetchStudy(study.projectId, study.id)}
               className={cn(
                 'flex items-start gap-4 px-4 py-3.5 transition-colors duration-fast ease-standard',
                 'hover:bg-layer-hover focus-ring-inset',

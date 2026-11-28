@@ -7,12 +7,17 @@ import type { Project } from '../types/project.types';
 
 interface ProjectCardProps {
   project: Project;
+  /** Called on hover, focus or touch, so the page's data can load before the click. */
+  onIntent?: (project: Project) => void;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, onIntent }: ProjectCardProps) {
+  const intent = onIntent ? () => onIntent(project) : undefined;
   return (
     <Link
       href={ROUTES.project(project.id)}
+      onPointerEnter={intent}
+      onFocus={intent}
       className={cn(
         'flex items-center gap-4 px-4 py-3 transition-colors duration-fast ease-standard',
         'hover:bg-layer-hover focus-ring-inset',

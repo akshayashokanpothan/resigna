@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { FileText, FlaskConical, FolderKanban, Search } from 'lucide-react';
 import { useProjects } from '@/modules/projects';
 import { useFirstWorkspace } from '@/modules/workspace';
@@ -108,7 +108,6 @@ function ResultRow({
 
 /** Basic search across the workspace's projects, studies and sources. */
 export function ResearchSearch() {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const initial = searchParams.get('q') ?? '';
@@ -121,10 +120,13 @@ export function ResearchSearch() {
       const next = normalizeSearchTerm(input);
       setTerm(next);
       const url = next ? `${pathname}?q=${encodeURIComponent(next)}` : pathname;
-      router.replace(url, { scroll: false });
+      // Native History API: keeps ?q= shareable without a server round trip per search.
+      if (url !== `${window.location.pathname}${window.location.search}`) {
+        window.history.replaceState(null, '', url);
+      }
     }, 250);
     return () => clearTimeout(timer);
-  }, [input, pathname, router]);
+  }, [input, pathname]);
 
   const { workspace } = useFirstWorkspace();
   const { data: projects } = useProjects(workspace?.id);

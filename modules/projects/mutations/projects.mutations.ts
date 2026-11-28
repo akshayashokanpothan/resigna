@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectsService } from '../services/projects.service';
-import type { UpdateProjectInput } from '../types/project.types';
+import type { Project, UpdateProjectInput } from '../types/project.types';
 import { queryKeys } from '@/shared/constants/query-keys';
 import { toast } from '@/shared/utils/toast';
 
@@ -26,11 +26,30 @@ export function useUpdateProject() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: UpdateProjectInput }) =>
       projectsService.update(id, input),
+    // Optimistic: show the new name, description or archived state at once instead of after a
+    // round trip to the database, and roll back if the write fails.
+    onMutate: async ({ id, input }) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.projects.root() });
+      const snapshot = queryClient.getQueriesData<Project[] | Project | null>({
+        queryKey: queryKeys.projects.root(),
+      });
+      queryClient.setQueriesData<Project[] | Project | null>(
+        { queryKey: queryKeys.projects.root() },
+        (data) => {
+          if (Array.isArray(data)) {
+            return data.map((project) => (project.id === id ? { ...project, ...input } : project));
+          }
+          return data && data.id === id ? { ...data, ...input } : data;
+        },
+      );
+      return { snapshot };
+    },
     onSuccess: (project) => {
       queryClient.setQueryData(queryKeys.projects.detail(project.id), project);
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all(project.workspaceId) });
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      context?.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Could not save the project. Please try again.', error);
     },
   });

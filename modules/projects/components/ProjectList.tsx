@@ -1,7 +1,8 @@
 'use client';
 
 import { FolderOpen } from 'lucide-react';
-import { useProjects } from '../hooks/use-projects';
+import { useCallback } from 'react';
+import { usePrefetchProject, useProjects } from '../hooks/use-projects';
 import { partitionProjectsByStatus } from '../domain/project.domain';
 import type { Project } from '../types/project.types';
 import { ProjectCard } from './ProjectCard';
@@ -12,10 +13,20 @@ import { NetworkError } from '@/shared/components/ErrorPage';
 
 interface ProjectListProps {
   workspaceId: string;
+  /** Extra prefetching on hover, focus or touch of a project (e.g. its research lists). */
+  onProjectIntent?: (project: Project) => void;
 }
 
-export function ProjectList({ workspaceId }: ProjectListProps) {
+export function ProjectList({ workspaceId, onProjectIntent }: ProjectListProps) {
   const { data: projects, isLoading, isError, refetch } = useProjects(workspaceId);
+  const prefetchProject = usePrefetchProject();
+  const onIntent = useCallback(
+    (project: Project) => {
+      prefetchProject(project.id);
+      onProjectIntent?.(project);
+    },
+    [prefetchProject, onProjectIntent],
+  );
 
   if (isLoading) return <ProjectListSkeleton count={5} />;
 
@@ -37,7 +48,7 @@ export function ProjectList({ workspaceId }: ProjectListProps) {
   return (
     <>
       {active.length > 0 ? (
-        <ProjectGroup label="Projects" projects={active} />
+        <ProjectGroup label="Projects" projects={active} onIntent={onIntent} />
       ) : (
         <EmptyState
           icon={FolderOpen}
@@ -54,19 +65,27 @@ export function ProjectList({ workspaceId }: ProjectListProps) {
           >
             Archived
           </h2>
-          <ProjectGroup label="Archived projects" projects={archived} />
+          <ProjectGroup label="Archived projects" projects={archived} onIntent={onIntent} />
         </section>
       )}
     </>
   );
 }
 
-function ProjectGroup({ label, projects }: { label: string; projects: Project[] }) {
+function ProjectGroup({
+  label,
+  projects,
+  onIntent,
+}: {
+  label: string;
+  projects: Project[];
+  onIntent: (project: Project) => void;
+}) {
   return (
     <div role="list" aria-label={label}>
       {projects.map((project) => (
         <div key={project.id} role="listitem">
-          <ProjectCard project={project} />
+          <ProjectCard project={project} onIntent={onIntent} />
         </div>
       ))}
     </div>
