@@ -1,5 +1,5 @@
 import { ROUTES } from '@/shared/constants/routes';
-import { FolderKanban, Palette, Plus, Settings } from 'lucide-react';
+import { FileText, FolderKanban, Palette, Plus, Settings } from 'lucide-react';
 
 export interface CommandItem {
   id: string;
@@ -19,6 +19,13 @@ export const commandItems: CommandItem[] = [
     group: 'navigation',
     href: ROUTES.projects,
     icon: FolderKanban,
+  },
+  {
+    id: 'go-research',
+    label: 'Search research',
+    group: 'navigation',
+    href: ROUTES.research(),
+    icon: FileText,
   },
   {
     id: 'go-settings',
