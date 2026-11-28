@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/constants/query-keys';
 import { AppError } from '@/shared/errors/AppError';
@@ -8,6 +9,7 @@ import { toast } from '@/shared/utils/toast';
 import { SEARCH_MIN_LENGTH } from '../domain/research.domain';
 import { researchService } from '../services/research.service';
 import type {
+  Study,
   CreateSourceInput,
   ParticipantInput,
   SourceMetadataInput,
@@ -33,10 +35,17 @@ export function useStudies(projectId: string) {
 }
 
 export function useStudy(projectId: string, studyId: string | undefined) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: keys.study(projectId, studyId ?? ''),
     queryFn: () => researchService().getStudy(studyId!),
     enabled: !!studyId,
+    // Show the row we already have from the project's study list straight away, while the
+    // full record is fetched in the background.
+    placeholderData: () =>
+      queryClient
+        .getQueryData<Study[]>(keys.studies(projectId))
+        ?.find((study) => study.id === studyId),
   });
 }
 
@@ -69,6 +78,64 @@ export function useResearchSearch(workspaceId: string | undefined, term: string)
     enabled: !!workspaceId && term.length >= SEARCH_MIN_LENGTH,
     staleTime: 30_000,
   });
+}
+
+// Prefetching ----------------------------------------------------------------
+// Called on hover, focus or touch of a link (and when a project page mounts), so the data is
+// usually in the cache by the time the click lands. prefetchQuery skips anything still fresh.
+
+/** Studies, sources and participants for one project: everything the project page shows. */
+export function usePrefetchProjectResearch() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    (projectId: string) => {
+      void queryClient.prefetchQuery({
+        queryKey: keys.studies(projectId),
+        queryFn: () => researchService().listStudies(projectId),
+      });
+      void queryClient.prefetchQuery({
+        queryKey: keys.sources(projectId, undefined),
+        queryFn: () => researchService().listSources({ projectId, studyId: undefined }),
+      });
+      void queryClient.prefetchQuery({
+        queryKey: keys.participants(projectId),
+        queryFn: () => researchService().listParticipants(projectId),
+      });
+    },
+    [queryClient],
+  );
+}
+
+/** One study and its sources. */
+export function usePrefetchStudy() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    (projectId: string, studyId: string) => {
+      void queryClient.prefetchQuery({
+        queryKey: keys.study(projectId, studyId),
+        queryFn: () => researchService().getStudy(studyId),
+      });
+      void queryClient.prefetchQuery({
+        queryKey: keys.sources(projectId, studyId),
+        queryFn: () => researchService().listSources({ projectId, studyId }),
+      });
+    },
+    [queryClient],
+  );
+}
+
+/** One source with its transcript. */
+export function usePrefetchSource() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    (projectId: string, sourceId: string) => {
+      void queryClient.prefetchQuery({
+        queryKey: keys.source(projectId, sourceId),
+        queryFn: () => researchService().getSource(sourceId),
+      });
+    },
+    [queryClient],
+  );
 }
 
 // Mutations ------------------------------------------------------------------

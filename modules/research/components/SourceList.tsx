@@ -11,6 +11,7 @@ import {
   SOURCE_STATUS_META,
   SOURCE_TYPE_LABELS,
 } from '../domain/research.domain';
+import { usePrefetchSource } from '../hooks/use-research';
 import type { Participant, ResearchSourceSummary, Study } from '../types/research.types';
 
 interface SourceListProps {
@@ -24,6 +25,7 @@ export function SourceList({ sources, participants, studies }: SourceListProps) 
   const participantLabel = (id: string | null) =>
     id ? participants.find((p) => p.id === id)?.label : undefined;
   const studyTitle = (id: string) => studies?.find((s) => s.id === id)?.title;
+  const prefetchSource = usePrefetchSource();
 
   return (
     <ul role="list" aria-label="Sources" className="flex flex-col">
@@ -36,6 +38,8 @@ export function SourceList({ sources, participants, studies }: SourceListProps) 
           <li key={source.id} className="border-b border-border last:border-b-0">
             <Link
               href={ROUTES.source(source.projectId, source.id)}
+              onPointerEnter={() => prefetchSource(source.projectId, source.id)}
+              onFocus={() => prefetchSource(source.projectId, source.id)}
               className={cn(
                 'flex items-start gap-4 px-4 py-3 transition-colors duration-fast ease-standard',
                 'hover:bg-layer-hover focus-ring-inset',

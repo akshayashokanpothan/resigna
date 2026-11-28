@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarStore } from '@/stores/sidebar.store';
-import { partitionProjectsByStatus, useProjects } from '@/modules/projects';
+import { partitionProjectsByStatus, usePrefetchProject, useProjects } from '@/modules/projects';
+import { usePrefetchProjectResearch } from '@/modules/research';
 import { useFirstWorkspace } from '@/modules/workspace';
 import { cn } from '@/shared/utils/cn';
 import { ROUTES } from '@/shared/constants/routes';
@@ -13,6 +14,12 @@ export function SidebarRecentProjects() {
   const { workspace } = useFirstWorkspace();
   const { data: projects } = useProjects(workspace?.id);
   const pathname = usePathname();
+  const prefetchProject = usePrefetchProject();
+  const prefetchResearch = usePrefetchProjectResearch();
+  const prefetch = (projectId: string) => {
+    prefetchProject(projectId);
+    prefetchResearch(projectId);
+  };
 
   const recentProjects = partitionProjectsByStatus(projects ?? []).active.slice(0, 5);
 
@@ -34,6 +41,8 @@ export function SidebarRecentProjects() {
             <li key={project.id}>
               <Link
                 href={href}
+                onPointerEnter={() => prefetch(project.id)}
+                onFocus={() => prefetch(project.id)}
                 className={cn(
                   'flex h-8 items-center gap-2.5 rounded-control px-2.5 text-sm focus-ring',
                   'transition-colors duration-fast ease-standard',

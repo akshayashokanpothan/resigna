@@ -15,7 +15,12 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            // The database is far from most users (Sydney), so every refetch costs 250 ms to
+            // over 1 s. Treat data as fresh for 5 minutes and keep it in memory for 30, so going
+            // back to a page renders from cache instead of waiting. Our own writes invalidate
+            // the queries they touch, so this does not hide the user's changes.
+            staleTime: 5 * 60 * 1000,
+            gcTime: 30 * 60 * 1000,
             retry: 1,
             refetchOnWindowFocus: false,
           },

@@ -7,6 +7,7 @@ import {
   ProjectList,
   ProjectListSkeleton,
 } from '@/modules/projects';
+import { usePrefetchProjectResearch } from '@/modules/research';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { NetworkError } from '@/shared/components/ErrorPage';
 import { PageHeader } from '@/shared/components/PageHeader';
@@ -18,6 +19,7 @@ export default function ProjectsPage() {
     isError: isWorkspaceError,
     refetch: refetchWorkspace,
   } = useFirstWorkspace();
+  const prefetchResearch = usePrefetchProjectResearch();
 
   return (
     <div className="mx-auto max-w-5xl px-8 py-8">
@@ -33,7 +35,10 @@ export default function ProjectsPage() {
         ) : isWorkspaceError ? (
           <NetworkError onRetry={() => refetchWorkspace()} />
         ) : workspace ? (
-          <ProjectList workspaceId={workspace.id} />
+          <ProjectList
+            workspaceId={workspace.id}
+            onProjectIntent={(project) => prefetchResearch(project.id)}
+          />
         ) : (
           <EmptyState
             title="No workspace found"
