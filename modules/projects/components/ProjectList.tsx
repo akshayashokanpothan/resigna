@@ -1,11 +1,14 @@
 'use client';
 
+import { FolderOpen } from 'lucide-react';
 import { useProjects } from '../hooks/use-projects';
+import { partitionProjectsByStatus } from '../domain/project.domain';
+import type { Project } from '../types/project.types';
 import { ProjectCard } from './ProjectCard';
 import { ProjectListSkeleton } from './ProjectListSkeleton';
+import { NewProjectButton } from './NewProjectButton';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { NetworkError } from '@/shared/components/ErrorPage';
-import { FolderOpen } from 'lucide-react';
 
 interface ProjectListProps {
   workspaceId: string;
@@ -18,18 +21,49 @@ export function ProjectList({ workspaceId }: ProjectListProps) {
 
   if (isError) return <NetworkError onRetry={() => refetch()} />;
 
-  if (!projects || projects.length === 0) {
+  const { active, archived } = partitionProjectsByStatus(projects ?? []);
+
+  if (active.length === 0 && archived.length === 0) {
     return (
       <EmptyState
         icon={FolderOpen}
         title="No projects yet"
-        description="Projects will appear here once you create your first one."
+        description="Create a project to start collecting research for a study."
+        action={<NewProjectButton label="Create your first project" />}
       />
     );
   }
 
   return (
-    <div role="list" aria-label="Projects">
+    <>
+      {active.length > 0 ? (
+        <ProjectGroup label="Projects" projects={active} />
+      ) : (
+        <EmptyState
+          icon={FolderOpen}
+          title="No active projects"
+          description="All your projects are archived. Create a new one or restore an archived project."
+          action={<NewProjectButton />}
+        />
+      )}
+      {archived.length > 0 && (
+        <section aria-labelledby="archived-projects-heading">
+          <h2
+            id="archived-projects-heading"
+            className="border-y border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-4 py-2 text-xs font-medium text-[hsl(var(--muted-foreground))]"
+          >
+            Archived
+          </h2>
+          <ProjectGroup label="Archived projects" projects={archived} />
+        </section>
+      )}
+    </>
+  );
+}
+
+function ProjectGroup({ label, projects }: { label: string; projects: Project[] }) {
+  return (
+    <div role="list" aria-label={label}>
       {projects.map((project) => (
         <div key={project.id} role="listitem">
           <ProjectCard project={project} />

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X } from 'lucide-react';
 import { useCommandPaletteStore } from '@/stores/command-palette.store';
+import { useProjectDialogStore } from '@/stores/project-dialog.store';
+import { ROUTES } from '@/shared/constants/routes';
 import { useKeyboardShortcut } from '@/shared/hooks/use-keyboard-shortcut';
 import { useSignOut } from '@/modules/auth';
 import { variants, transition } from '@/shared/theme/motion';
@@ -17,6 +19,7 @@ export function CommandPalette() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const signOut = useSignOut();
+  const openCreateProject = useProjectDialogStore((state) => state.openCreate);
 
   // Close on Escape
   useKeyboardShortcut({ key: 'Escape' }, () => {
@@ -38,6 +41,9 @@ export function CommandPalette() {
     close();
     if (item.href) {
       router.push(item.href);
+    } else if (item.action === 'new-project') {
+      router.push(ROUTES.projects);
+      openCreateProject();
     } else if (item.action === 'sign-out') {
       signOut.mutate();
     }

@@ -12,6 +12,8 @@ export interface Project {
 export interface CreateProjectInput {
   workspaceId: string;
   name: string;
-  description?: string;
+  description?: string | null;
   createdBy: string;
 }
+
+export type UpdateProjectInput = Partial<Pick<Project, 'name' | 'description' | 'status'>>;
