@@ -44,10 +44,9 @@ export const primaryNavItems: NavItem[] = [
   {
     id: 'research',
     label: 'Research',
-    href: '/research',
+    href: ROUTES.research(),
     icon: FileText,
-    description: 'Interviews, surveys, transcripts, notes and source material',
-    disabled: true,
+    description: 'Search interviews, transcripts, notes and source material',
   },
   {
     id: 'participants',

@@ -1,29 +1,22 @@
 # modules/research
 
-**Status:** Reserved — not yet implemented.
+**Status:** Phase 2 (Research foundation), built 28 Nov 2026.
 
-## Purpose
+Owns layer 1 of the Knowledge Model, Collect: studies, participants with consent, and research sources (`supabase/migrations/0007`, functions in `0011`).
 
-The research module will own all functionality related to research data ingestion, storage, and management.
+## What it does
 
-## Planned Responsibilities
+- **Studies** inside a project: title, goal, research questions, methods, status and timeline.
+- **Sources** inside a study: paste text, or upload `.txt .md .vtt .srt .csv` (text read in the browser, status `ready`) or `.pdf .docx` (stored in the private `research-sources` bucket, status `pending` until text extraction lands in Phase 3). Source text is never edited; only its details are.
+- **Participants**: pseudonymous labels (P01…), attributes, consent (`pending`, `granted`, `limited`, `withdrawn`). "Delete with all data" calls `purge_participant()`, which removes their sources, evidence and the participant in one transaction and returns the file paths to remove from storage.
+- **Search** (`/research`): projects, studies (title, goal) and sources (title, file name, full text through `search_research_sources()`, with a snippet).
 
-- Research session management (interview, survey, observation)
-- Raw data ingestion (transcript upload, manual entry)
-- Normalization into the shared Knowledge Model (see `modules/knowledge`)
-- Research tagging and organization
+## Public API
 
-## Public API (planned)
+See `index.ts`: types, `researchService()`, query hooks, and the page components `ProjectResearch`, `StudyDetail`, `SourceDetail`, `ResearchSearch`.
 
-```ts
-// To be defined in Sprint 2
-export type { ResearchSession, ResearchNote };
-export { useResearchSessions };
-export { ResearchUploader };
-```
+## Notes
 
-## Architectural Notes
-
-- This module feeds into `modules/knowledge` — never into `modules/ai` directly.
-- AI providers consume the Knowledge Model, not raw research data.
-- See ADR-0003 for the Shared Research Knowledge Model decision.
+- Every call goes through RLS (`is_project_member`); both SQL functions are `security invoker`.
+- Withdrawn consent keeps rows (decision of 28 Nov 2026) but is flagged on every source of that participant; analysis features must exclude them.
+- Feeds `modules/knowledge` (evidence, Phase 3), never `modules/ai` directly.

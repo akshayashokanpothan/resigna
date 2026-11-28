@@ -1,13 +1,12 @@
 'use client';
 
-import { use, useState } from 'react';
+import { Suspense, use, useState } from 'react';
 import { Archive, ArchiveRestore, Pencil } from 'lucide-react';
 import { EditProjectDialog, useProject, useProjectActions } from '@/modules/projects';
+import { ProjectResearch } from '@/modules/research';
 import Link from 'next/link';
 import { Badge } from '@/shared/components/Badge';
 import { Button, buttonVariants } from '@/shared/components/Button';
-import { Card } from '@/shared/components/Card';
-import { EmptyState } from '@/shared/components/EmptyState';
 import { Notification } from '@/shared/components/Notification';
 import { ROUTES } from '@/shared/constants/routes';
 import { PageHeader } from '@/shared/components/PageHeader';
@@ -94,14 +93,9 @@ function ProjectDetailContent({ projectId }: { projectId: string }) {
         </Notification>
       )}
 
-      <Card padding="none">
-        <EmptyState
-          illustration="no-research"
-          title="Research workspace is coming next"
-          description="Soon you'll upload or paste interview transcripts and notes here, and pull evidence out of them."
-          action={<Badge tone="accent">Next release</Badge>}
-        />
-      </Card>
+      <Suspense>
+        <ProjectResearch projectId={project.id} readOnly={isArchived} />
+      </Suspense>
 
       <EditProjectDialog project={project} open={isEditing} onClose={() => setIsEditing(false)} />
     </div>

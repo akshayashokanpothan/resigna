@@ -83,7 +83,7 @@ export function Dialog({
             className="fixed inset-0 z-50 bg-overlay"
             aria-hidden="true"
           />
-          <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center p-4 pt-[15vh]">
+          <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center p-4 pt-[10vh] sm:pt-[15vh]">
             <motion.div
               key="dialog-panel"
               ref={panelRef}
@@ -97,6 +97,8 @@ export function Dialog({
               className={cn(
                 'pointer-events-auto w-full rounded-dialog border border-border',
                 'bg-surface p-6 shadow-overlay outline-none',
+                // Tall forms scroll inside the panel instead of running off the screen.
+                'max-h-[calc(90vh-2rem)] overflow-y-auto sm:max-h-[calc(85vh-2rem)]',
                 { sm: 'max-w-[400px]', md: 'max-w-[480px]', lg: 'max-w-[640px]' }[size],
                 className,
               )}
