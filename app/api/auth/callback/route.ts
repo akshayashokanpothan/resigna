@@ -4,9 +4,10 @@ import { ROUTES } from '@/shared/constants/routes';
 import { safeRedirectPath } from '@/shared/utils/redirect';
 
 /**
- * OAuth callback handler.
- * Supabase redirects here after Google/GitHub OAuth.
- * Exchanges the auth code for a session and redirects to /projects.
+ * Auth callback handler.
+ * Supabase redirects here after Google/GitHub OAuth and after email
+ * confirmation links. Exchanges the auth code for a session and redirects
+ * to /projects.
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // Redirect to login with error state if code exchange fails
-  return NextResponse.redirect(`${origin}${ROUTES.login}?error=oauth_failed`);
+  // No code (Supabase sends `error` instead when a link is expired or used),
+  // or the exchange failed, e.g. a confirmation link opened in another browser.
+  return NextResponse.redirect(`${origin}${ROUTES.login}?error=auth_failed`);
 }
