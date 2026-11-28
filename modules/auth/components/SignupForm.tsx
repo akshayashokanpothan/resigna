@@ -9,6 +9,7 @@ import { getAuthService } from '../services/auth.service';
 import { ROUTES } from '@/shared/constants/routes';
 import { toast } from '@/shared/utils/toast';
 import { cn } from '@/shared/utils/cn';
+import { getAuthErrorMessage } from '../utils/auth-errors';
 
 export function SignupForm() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export function SignupForm() {
         setIsCheckEmail(true);
       }
     } catch (error) {
-      toast.error('Signup failed. Please try again.', error);
+      toast.error(getAuthErrorMessage(error, 'Signup failed. Please try again.'), error);
     } finally {
       setIsLoading(false);
     }
