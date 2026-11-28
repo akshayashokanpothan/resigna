@@ -112,8 +112,8 @@ export const config = {
      * - favicon.ico, sitemap.xml, robots.txt
      * - brand assets and metadata files (logos, illustrations, icons, manifest, social images),
      *   so the sign-in page and link previews can load them without a session
-     * - api/auth/callback (OAuth callback must be public)
+     * - api/auth/ (OAuth callback and email link routes must be public)
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|brand/|icon\\.png|apple-icon\\.png|manifest\\.webmanifest|opengraph-image|twitter-image|api/auth/callback).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|brand/|icon\\.png|apple-icon\\.png|manifest\\.webmanifest|opengraph-image|twitter-image|api/auth/).*)',
   ],
 };

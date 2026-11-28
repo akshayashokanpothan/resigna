@@ -1,12 +1,20 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LoginForm, OAuthButtons, AuthCard } from '@/modules/auth';
+import { EmailSignIn, OAuthButtons, AuthCard } from '@/modules/auth';
 
 export const metadata: Metadata = {
   title: 'Sign in',
 };
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  // An expired link means the user wanted a link, so offer a new one straight away.
+  const { error } = await searchParams;
+  const initialMode = error === 'link_expired' ? 'magic' : 'password';
+
   return (
     <div className="w-full">
       <AuthCard title="Sign in" description="Welcome back. Sign in to continue.">
@@ -21,7 +29,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <LoginForm />
+        <EmailSignIn initialMode={initialMode} />
       </AuthCard>
 
       <div className="mt-4 text-center">

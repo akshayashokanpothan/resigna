@@ -191,8 +191,10 @@
     // "external_url": "",
     // A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
     "additional_redirect_urls": [
-      "http://localhost:3000/api/auth/callback",
-      "http://127.0.0.1:3000/api/auth/callback"
+      "http://localhost:3000/**",
+      "http://127.0.0.1:3000/**",
+      // Playwright e2e runs the app on port 3100.
+      "http://localhost:3100/**"
     ],
     // How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
     "jwt_expiry": 3600,
@@ -286,11 +288,21 @@
       // },
 
       // Uncomment to customize email template
-      // "template": {
-      //   "invite": {
-      //     "subject": "You have been invited",
-      //     "content_path": "./supabase/templates/invite.html"
-      //   }
+      // Same templates as the live project (Dashboard → Authentication → Emails), so links go
+      // through /api/auth/confirm with a token hash and work on any device.
+      "template": {
+        "magic_link": {
+          "subject": "Your Resigna sign-in link",
+          "content_path": "./supabase/templates/magic-link.html"
+        },
+        "confirmation": {
+          "subject": "Confirm your Resigna account",
+          "content_path": "./supabase/templates/confirmation.html"
+        }
+      },
+      // "invite": {
+      //   "subject": "You have been invited",
+      //   "content_path": "./supabase/templates/invite.html"
       // },
 
       // Uncomment to customize notification email template

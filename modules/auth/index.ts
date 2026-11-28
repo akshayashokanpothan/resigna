@@ -6,5 +6,7 @@ export { useSession, useCurrentUser } from './hooks/use-session';
 export { useSignOut } from './hooks/use-sign-out';
 export { AuthCard } from './components/AuthCard';
 export { LoginForm } from './components/LoginForm';
+export { MagicLinkForm } from './components/MagicLinkForm';
+export { EmailSignIn } from './components/EmailSignIn';
 export { SignupForm } from './components/SignupForm';
 export { OAuthButtons } from './components/OAuthButtons';

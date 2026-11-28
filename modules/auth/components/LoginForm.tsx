@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { loginSchema, type LoginInput } from '../schemas/auth.schema';
 import { getAuthService } from '../services/auth.service';
 import { ROUTES } from '@/shared/constants/routes';
@@ -18,7 +18,12 @@ function getSearchParam(name: string): string | null {
   return new URLSearchParams(window.location.search).get(name);
 }
 
-export function LoginForm() {
+interface LoginFormProps {
+  /** Switch to passwordless sign-in. */
+  onUseMagicLink?: () => void;
+}
+
+export function LoginForm({ onUseMagicLink }: LoginFormProps = {}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,15 +34,6 @@ export function LoginForm() {
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
-
-  useEffect(() => {
-    const errorParam = getSearchParam('error');
-    if (errorParam === 'auth_failed' || errorParam === 'oauth_failed') {
-      toast.error(
-        "Sign-in didn't complete. If you just confirmed your email, sign in below; otherwise please try again.",
-      );
-    }
-  }, []);
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
@@ -87,6 +83,12 @@ export function LoginForm() {
       >
         Sign in
       </Button>
+
+      {onUseMagicLink && (
+        <Button variant="ghost" size="sm" onClick={onUseMagicLink} className="self-center">
+          Email me a sign-in link instead
+        </Button>
+      )}
     </form>
   );
 }
