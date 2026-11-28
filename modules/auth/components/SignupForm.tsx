@@ -44,7 +44,8 @@ export function SignupForm() {
       }
     } catch (error) {
       toast.error(getAuthErrorMessage(error, 'Signup failed. Please try again.'), error);
-    } finally {
+      // Only re-enable the button on failure. On success it stays busy until the next page
+      // has loaded, instead of flicking back to idle while the navigation is still running.
       setIsLoading(false);
     }
   };
