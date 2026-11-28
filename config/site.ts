@@ -1,7 +1,7 @@
-import { APP_NAME, APP_TAGLINE, APP_URL } from '@/shared/constants/app.constants';
+import { APP_DISPLAY_NAME, APP_TAGLINE, APP_URL } from '@/shared/constants/app.constants';
 
 export const siteConfig = {
-  name: APP_NAME,
+  name: APP_DISPLAY_NAME,
   tagline: APP_TAGLINE,
   url: APP_URL,
   description:
