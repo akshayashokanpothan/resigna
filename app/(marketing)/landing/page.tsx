@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { APP_NAME, APP_TAGLINE, APP_URL } from '@/shared/constants/app.constants';
 import { ROUTES } from '@/shared/constants/routes';
+import { buttonVariants } from '@/shared/components/Button';
+import { Logo } from '@/shared/components/Logo';
+import { cn } from '@/shared/utils/cn';
 
 export const metadata: Metadata = {
   title: { absolute: `${APP_NAME}: ${APP_TAGLINE}` },
@@ -15,41 +18,36 @@ export default function LandingPage() {
   const signUpUrl = new URL(ROUTES.signup, APP_URL).href;
 
   return (
-    <div className="flex min-h-screen flex-col bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
-        <a
-          href={signInUrl}
-          className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-[hsl(var(--foreground))]"
-        >
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-canvas text-fg">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[url('/brand/patterns/research-grid-pattern.svg')] bg-[length:1200px_800px] bg-top opacity-60 [mask-image:radial-gradient(ellipse_at_top,black_10%,transparent_65%)]"
+      />
+      <header className="relative mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
+        <Logo height={24} />
+        <a href={signInUrl} className={buttonVariants({ variant: 'ghost' })}>
           Sign in
         </a>
       </header>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{APP_TAGLINE}</h1>
-        <p className="mt-5 max-w-xl text-base text-[hsl(var(--muted-foreground))]">
+      <main className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 text-center">
+        <h1 className="text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">{APP_TAGLINE}</h1>
+        <p className="mt-5 max-w-xl text-base leading-7 text-fg-secondary">
           Bring interviews and notes into one place, organise them into evidence, and turn that
           evidence into affinity maps, personas, journey maps and How Might We statements, with
           every insight traced back to what participants said.
         </p>
         <div className="mt-8 flex gap-3">
-          <a
-            href={signUpUrl}
-            className="rounded-md bg-[hsl(var(--primary))] px-5 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] transition-opacity hover:opacity-90"
-          >
+          <a href={signUpUrl} className={buttonVariants({ size: 'lg' })}>
             Get started
           </a>
-          <a
-            href={signInUrl}
-            className="rounded-md border border-[hsl(var(--border))] px-5 py-2.5 text-sm font-medium transition-colors hover:bg-[hsl(var(--accent))]"
-          >
+          <a href={signInUrl} className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }))}>
             Sign in
           </a>
         </div>
       </main>
 
-      <footer className="mx-auto w-full max-w-5xl px-6 py-6 text-xs text-[hsl(var(--muted-foreground))]">
+      <footer className="relative mx-auto w-full max-w-5xl px-6 py-6 type-caption text-fg-secondary">
         © {new Date().getFullYear()} {APP_NAME}
       </footer>
     </div>

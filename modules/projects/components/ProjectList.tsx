@@ -26,9 +26,9 @@ export function ProjectList({ workspaceId }: ProjectListProps) {
   if (active.length === 0 && archived.length === 0) {
     return (
       <EmptyState
-        icon={FolderOpen}
+        illustration="no-projects"
         title="No projects yet"
-        description="Create a project to start collecting research for a study."
+        description="A project brings the research for one study together: sources, evidence and the insights you draw from them."
         action={<NewProjectButton label="Create your first project" />}
       />
     );
@@ -50,7 +50,7 @@ export function ProjectList({ workspaceId }: ProjectListProps) {
         <section aria-labelledby="archived-projects-heading">
           <h2
             id="archived-projects-heading"
-            className="border-y border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-4 py-2 text-xs font-medium text-[hsl(var(--muted-foreground))]"
+            className="border-y border-border bg-canvas px-4 py-2 type-overline text-fg-secondary"
           >
             Archived
           </h2>

@@ -23,3 +23,16 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('Button pending state', () => {
+  it('disables the button, sets aria-busy and shows the pending label', () => {
+    render(
+      <Button isLoading loadingText="Creating…">
+        Create project
+      </Button>,
+    );
+    const button = screen.getByRole('button', { name: 'Creating…' });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+  });
+});

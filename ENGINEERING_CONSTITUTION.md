@@ -58,8 +58,11 @@ Violation of these rules is a blocking code review comment, not a suggestion.
 
 ## 7. Design System
 
-- **Shared design tokens must always be used.** No hardcoded hex, hsl, rgb, rem, or px values in components.
-- All color references use `hsl(var(--token))` syntax from `globals.css`.
+- **Shared design tokens must always be used.** No hardcoded hex, hsl, rgb, rem, or px colour values in components.
+- Colours, radii and shadows come from the semantic token utilities defined in `app/globals.css`
+  (`bg-surface`, `text-fg-secondary`, `border-border-strong`, `rounded-control`, `shadow-overlay`…).
+  Tailwind's default palette is switched off. See `docs/design-system/README.md`.
+- Use the shared components in `shared/components` before writing new markup for a control.
 - All spacing uses Tailwind's scale derived from the 4px base grid.
 - All animations import from `shared/theme/motion.ts`. No component-local animation definitions.
 

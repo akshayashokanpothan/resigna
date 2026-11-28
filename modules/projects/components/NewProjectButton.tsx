@@ -12,8 +12,7 @@ interface NewProjectButtonProps {
 export function NewProjectButton({ label = 'New project', disabled }: NewProjectButtonProps) {
   const openCreate = useProjectDialogStore((state) => state.openCreate);
   return (
-    <Button onClick={openCreate} disabled={disabled}>
-      <Plus size={14} aria-hidden="true" />
+    <Button onClick={openCreate} disabled={disabled} leadingIcon={Plus}>
       {label}
     </Button>
   );

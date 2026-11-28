@@ -21,11 +21,11 @@ export function SidebarRecentProjects() {
   }
 
   return (
-    <div className="mt-4 px-2">
-      <h3 className="px-2 text-xs font-semibold text-[hsl(var(--muted-foreground))]">
-        Recent Projects
+    <nav className="mt-5" aria-labelledby="recent-projects-heading">
+      <h3 id="recent-projects-heading" className="px-2.5 pb-1 type-overline text-fg-secondary">
+        Recent projects
       </h3>
-      <ul className="mt-1 flex flex-col gap-0.5" role="list">
+      <ul className="flex flex-col gap-0.5" role="list">
         {recentProjects.map((project) => {
           const href = ROUTES.project(project.id);
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -35,19 +35,26 @@ export function SidebarRecentProjects() {
               <Link
                 href={href}
                 className={cn(
-                  'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                  'flex h-8 items-center gap-2.5 rounded-control px-2.5 text-sm focus-ring',
+                  'transition-colors duration-fast ease-standard',
                   isActive
-                    ? 'bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] font-medium'
-                    : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]',
-                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[hsl(var(--primary))]',
+                    ? 'bg-layer-selected font-medium text-fg'
+                    : 'text-fg-secondary hover:bg-layer-hover hover:text-fg',
                 )}
               >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'size-1.5 shrink-0 rounded-full',
+                    isActive ? 'bg-accent' : 'bg-border-strong',
+                  )}
+                />
                 <span className="truncate">{project.name}</span>
               </Link>
             </li>
           );
         })}
       </ul>
-    </div>
+    </nav>
   );
 }

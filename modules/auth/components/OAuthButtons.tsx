@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { cn } from '@/shared/utils/cn';
+import { Button } from '@/shared/components/Button';
 import { toast } from '@/shared/utils/toast';
 import { getAuthService } from '../services/auth.service';
 import type { OAuthProvider } from '../types/auth.types';
@@ -61,22 +61,18 @@ function OAuthButton({ provider, icon, label }: OAuthButtonProps) {
   };
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="secondary"
+      size="lg"
+      fullWidth
       onClick={handleClick}
-      disabled={isLoading}
+      isLoading={isLoading}
+      loadingText="Redirecting…"
       aria-label={`Sign in with ${label}`}
-      className={cn(
-        'flex h-9 w-full items-center justify-center gap-2.5 rounded-md border px-4 text-sm font-medium',
-        'border-[hsl(var(--border))] bg-transparent text-[hsl(var(--foreground))]',
-        'transition-colors hover:bg-[hsl(var(--muted))]',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))]',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-      )}
     >
       {icon}
-      <span>{isLoading ? `Redirecting…` : `Continue with ${label}`}</span>
-    </button>
+      <span>{`Continue with ${label}`}</span>
+    </Button>
   );
 }
 
