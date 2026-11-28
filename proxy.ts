@@ -31,11 +31,14 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // getUser() revalidates the token with Supabase Auth (getSession() only reads the cookie,
-  // which can be spoofed) and refreshes an expired session for Server Components.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims() verifies the access token's signature (so a spoofed cookie is rejected) and
+  // refreshes an expired session for Server Components. With asymmetric JWT signing keys it
+  // verifies locally against the cached JWKS, so most requests make no call to Supabase Auth.
+  // getUser() made a network round trip on every navigation and prefetch, which was the main
+  // delay after each click. With a legacy shared-secret key, getClaims() falls back to the
+  // same Auth server check getUser() did, so it is never less safe.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims?.sub ? data.claims : null;
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route);
   const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some((route) => pathname === route);
