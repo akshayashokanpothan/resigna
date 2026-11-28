@@ -1,6 +1,6 @@
 # Knowledge Model schema
 
-**Status:** v2 draft for review (28 Nov 2026). Re-shaped to match the Product Vision & Build Source of Truth v1.0 (roadmap D14).
+**Status:** v2, approved by Akshay 28 Nov 2026. Re-shaped to match the Product Vision & Build Source of Truth v1.0 (roadmap D14).
 **Migrations:** `supabase/migrations/0006`–`0010`, on top of `0005_security_rls_fixes`. Merged to `dev` once as v1 (#10) but never applied to any live database, so they are rewritten in place.
 **Related:** Product Vision sections 6–10 and 18, ADR-0003, ADR-0004, roadmap D12 and D14.
 
@@ -108,7 +108,7 @@ Evidence offsets count Unicode code points, as Postgres does. JavaScript string 
 
 ## Open questions
 
-1. **Withdrawn consent.** Recommended: keep the rows but have the app and AI exclude evidence from participants whose consent is withdrawn, and offer a purge action. Alternative: delete their evidence automatically when consent is withdrawn.
+1. **Withdrawn consent (decided 28 Nov 2026).** Rows are kept, the app and AI exclude evidence from participants whose consent is withdrawn, and a purge action deletes it on request. No automatic deletion. The exclusion is app logic (Sprint 1+), not a database rule.
 2. **Who can delete.** For now any workspace member can do everything, matching `projects`. Role limits can come later.
 3. **Cross-project links** (related themes across projects, vision section 10) are not in this schema. They need workspace-level tables and come with Phase 4.
 4. **`ai_runs` table** (model, tokens, cost) comes with Sprint 4. `ai_run_id` has no foreign key until then.
