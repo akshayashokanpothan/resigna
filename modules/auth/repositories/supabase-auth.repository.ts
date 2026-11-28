@@ -10,6 +10,7 @@ import type {
 } from '../types/auth.types';
 import type { AuthRepository } from './auth.repository';
 import { env } from '@/config/env';
+import { toAuthError } from '../utils/auth-errors';
 
 function mapUser(user: {
   id: string;
@@ -54,7 +55,7 @@ export class SupabaseAuthRepository implements AuthRepository {
 
   async signInWithEmail(email: string, password: string): Promise<Session> {
     const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new AuthError(error.message, ErrorCode.INVALID_CREDENTIALS, error);
+    if (error) throw toAuthError(error, ErrorCode.INVALID_CREDENTIALS);
     if (!data.session) throw new AuthError('No session returned', ErrorCode.UNAUTHORIZED);
 
     return {
@@ -69,9 +70,20 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
-      options: { data: metadata },
+      options: {
+        data: metadata,
+        // Send the confirmation link through our callback so the code is
+        // exchanged for a session (otherwise it lands on the Site URL root).
+        emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+      },
     });
-    if (error) throw new AuthError(error.message, ErrorCode.SIGNUP_FAILED, error);
+    if (error) throw toAuthError(error, ErrorCode.SIGNUP_FAILED);
+
+    // With email confirmation on, Supabase hides "already registered" by
+    // returning a fake user with no identities. Surface it instead.
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      throw new AuthError('User already registered', ErrorCode.EMAIL_ALREADY_REGISTERED);
+    }
 
     const user = data.user ? mapUser(data.user) : null;
     const session = data.session
@@ -92,7 +104,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         redirectTo: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
       },
     });
-    if (error) throw new AuthError(error.message, ErrorCode.OAUTH_FAILED, error);
+    if (error) throw toAuthError(error, ErrorCode.OAUTH_FAILED);
   }
 
   async signOut(): Promise<void> {

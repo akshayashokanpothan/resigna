@@ -10,6 +10,7 @@ import { ROUTES } from '@/shared/constants/routes';
 import { toast } from '@/shared/utils/toast';
 import { cn } from '@/shared/utils/cn';
 import { safeRedirectPath } from '@/shared/utils/redirect';
+import { getAuthErrorMessage } from '../utils/auth-errors';
 
 function getSearchParam(name: string): string | null {
   return new URLSearchParams(window.location.search).get(name);
@@ -28,8 +29,11 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    if (getSearchParam('error') === 'oauth_failed') {
-      toast.error('Social sign-in failed. Please try again.');
+    const errorParam = getSearchParam('error');
+    if (errorParam === 'auth_failed' || errorParam === 'oauth_failed') {
+      toast.error(
+        "Sign-in didn't complete. If you just confirmed your email, sign in below; otherwise please try again.",
+      );
     }
   }, []);
 
@@ -41,7 +45,7 @@ export function LoginForm() {
       router.push(safeRedirectPath(getSearchParam('redirectedFrom'), ROUTES.projects));
       router.refresh();
     } catch (error) {
-      toast.error('Invalid credentials. Please check your email and password.', error);
+      toast.error(getAuthErrorMessage(error, 'Sign-in failed. Please try again.'), error);
     } finally {
       setIsLoading(false);
     }
