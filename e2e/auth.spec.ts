@@ -37,7 +37,7 @@ test.describe('authentication', () => {
     await page.getByLabel('Password').fill(`${user.password}-wrong`);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
-    await expect(page.locator('[data-sonner-toast]').getByText(/invalid/i)).toBeVisible();
+    await expect(page.locator('[data-sonner-toast]').getByText(/incorrect|invalid/i)).toBeVisible();
     await expect(page).toHaveURL(/\/login/);
   });
 });
