@@ -5,7 +5,7 @@ import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[hsl(var(--background))]">
+    <div className="flex h-screen w-screen overflow-hidden bg-canvas">
       {/* Sidebar */}
       <Sidebar />
 

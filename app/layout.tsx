@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { IBM_Plex_Mono, Inter } from 'next/font/google';
 import { Providers } from '@/providers';
 import { siteConfig } from '@/config/site';
+import { brandPalette } from '@/shared/theme/colors';
 import './globals.css';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-plex-mono',
   display: 'swap',
 });
 
@@ -16,6 +24,7 @@ export const metadata: Metadata = {
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
   metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: 'website',
@@ -34,13 +43,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0d0e11',
+  themeColor: brandPalette.deepCharcoal,
   colorScheme: 'dark',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <body>
         <Providers>{children}</Providers>
       </body>

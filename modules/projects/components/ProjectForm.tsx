@@ -3,7 +3,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/components/Button';
-import { cn } from '@/shared/utils/cn';
+import { Field } from '@/shared/components/Field';
+import { Input, Textarea } from '@/shared/components/Input';
 import {
   PROJECT_DESCRIPTION_MAX,
   PROJECT_NAME_MAX,
@@ -19,13 +20,6 @@ interface ProjectFormProps {
   onSubmit: (values: ProjectFormValues) => Promise<boolean>;
   onCancel: () => void;
 }
-
-const fieldClass = cn(
-  'w-full rounded-md border bg-transparent px-3 text-sm outline-none transition-colors',
-  'border-[hsl(var(--border))] text-[hsl(var(--foreground))]',
-  'placeholder:text-[hsl(var(--muted-foreground))]',
-  'focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary))]',
-);
 
 export function ProjectForm({
   defaultValues,
@@ -52,63 +46,36 @@ export function ProjectForm({
       className="flex flex-col gap-4"
       noValidate
     >
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="project-name" className="text-sm font-medium text-[hsl(var(--foreground))]">
-          Name
-        </label>
-        <input
-          id="project-name"
-          type="text"
+      <Field id="project-name" label="Name" error={errors.name?.message}>
+        <Input
           autoComplete="off"
           maxLength={PROJECT_NAME_MAX}
           placeholder="Checkout redesign interviews"
-          aria-invalid={!!errors.name}
-          aria-describedby={errors.name ? 'project-name-error' : undefined}
           {...register('name')}
-          className={cn(fieldClass, 'h-9', errors.name && 'border-[hsl(var(--destructive))]')}
         />
-        {errors.name && (
-          <p id="project-name-error" className="text-xs text-[hsl(var(--destructive))]">
-            {errors.name.message}
-          </p>
-        )}
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="project-description"
-          className="text-sm font-medium text-[hsl(var(--foreground))]"
-        >
-          Description{' '}
-          <span className="font-normal text-[hsl(var(--muted-foreground))]">(optional)</span>
-        </label>
-        <textarea
-          id="project-description"
+      <Field
+        id="project-description"
+        label="Description"
+        optional
+        helperText="What are you researching, and for whom?"
+        error={errors.description?.message}
+      >
+        <Textarea
           rows={3}
           maxLength={PROJECT_DESCRIPTION_MAX}
-          placeholder="What are you researching, and for whom?"
-          aria-invalid={!!errors.description}
-          aria-describedby={errors.description ? 'project-description-error' : undefined}
+          placeholder="Five interviews with returning shoppers about checkout trust"
           {...register('description')}
-          className={cn(
-            fieldClass,
-            'resize-none py-2',
-            errors.description && 'border-[hsl(var(--destructive))]',
-          )}
         />
-        {errors.description && (
-          <p id="project-description-error" className="text-xs text-[hsl(var(--destructive))]">
-            {errors.description.message}
-          </p>
-        )}
-      </div>
+      </Field>
 
-      <div className="mt-1 flex justify-end gap-2">
+      <div className="mt-2 flex justify-end gap-2">
         <Button variant="secondary" onClick={onCancel} disabled={isPending}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? pendingLabel : submitLabel}
+        <Button type="submit" isLoading={isPending} loadingText={pendingLabel}>
+          {submitLabel}
         </Button>
       </div>
     </form>

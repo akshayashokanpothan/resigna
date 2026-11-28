@@ -1,23 +1,26 @@
 /**
- * Resigna Motion Tokens
- *
- * Framer Motion variants imported by components.
- * Components never define their own animation variants.
+ * Resigna motion tokens — fast (150 ms), standard (200 ms), slow (300 ms).
+ * Opacity and short translations only; no springs, bounce or elastic easing.
+ * Components import from here and never define their own variants.
+ * Reduced motion is honoured globally (MotionConfig in providers, media query in globals.css).
  */
-import type { Variants, Transition } from 'framer-motion';
+import type { Transition, Variants } from 'framer-motion';
+
+type Bezier = [number, number, number, number];
 
 export const duration = {
-  fast: 0.12,
-  default: 0.2,
+  fast: 0.15,
+  standard: 0.2,
   slow: 0.3,
-  verySlow: 0.5,
 } as const;
 
 export const ease = {
-  default: [0.16, 1, 0.3, 1] as [number, number, number, number],
-  in: [0.4, 0, 1, 1] as [number, number, number, number],
-  out: [0, 0, 0.2, 1] as [number, number, number, number],
-  spring: { type: 'spring', stiffness: 300, damping: 30 } as Transition,
+  /** Most UI changes: moving, resizing, colour */
+  standard: [0.2, 0, 0.38, 0.9] as Bezier,
+  /** Elements appearing */
+  entrance: [0, 0, 0.38, 0.9] as Bezier,
+  /** Elements leaving */
+  exit: [0.2, 0, 1, 0.9] as Bezier,
 } as const;
 
 export const variants = {
@@ -28,27 +31,28 @@ export const variants = {
   } satisfies Variants,
 
   fadeUp: {
-    initial: { opacity: 0, y: 6 },
+    initial: { opacity: 0, y: 4 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 6 },
+    exit: { opacity: 0, y: 4 },
   } satisfies Variants,
 
   scaleIn: {
-    initial: { opacity: 0, scale: 0.97 },
+    initial: { opacity: 0, scale: 0.98 },
     animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.97 },
+    exit: { opacity: 0, scale: 0.98 },
   } satisfies Variants,
 
   slideInLeft: {
-    initial: { opacity: 0, x: -8 },
+    initial: { opacity: 0, x: -4 },
     animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -8 },
+    exit: { opacity: 0, x: -4 },
   } satisfies Variants,
 } as const;
 
 export const transition = {
-  default: { duration: duration.default, ease: ease.default },
-  fast: { duration: duration.fast, ease: ease.out },
-  slow: { duration: duration.slow, ease: ease.default },
-  spring: ease.spring,
-} as const;
+  fast: { duration: duration.fast, ease: ease.standard },
+  default: { duration: duration.standard, ease: ease.standard },
+  enter: { duration: duration.standard, ease: ease.entrance },
+  exit: { duration: duration.fast, ease: ease.exit },
+  slow: { duration: duration.slow, ease: ease.standard },
+} as const satisfies Record<string, Transition>;

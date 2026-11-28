@@ -1,106 +1,54 @@
 'use client';
 
+import { ChevronDown, LogOut, Settings } from 'lucide-react';
 import { useCurrentUser, useSignOut } from '@/modules/auth';
-import { initials } from '@/shared/utils/format';
 import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';
-import Link from 'next/link';
-import { useState, useRef, useEffect } from 'react';
-import { Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Avatar } from '@/shared/components/Avatar';
+import { Menu } from '@/shared/components/Menu';
 
 export function UserMenu() {
   const { user } = useCurrentUser();
   const signOut = useSignOut();
-  const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   if (!user) return null;
+  const displayName = user.name ?? user.email;
 
   return (
-    <div ref={menuRef} className="relative">
-      <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-expanded={isOpen}
-        aria-haspopup="menu"
-        aria-label="User menu"
-        className={cn(
-          'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
-          'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[hsl(var(--primary))]',
-        )}
-      >
-        <span
-          className="flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold"
-          aria-hidden="true"
-        >
-          {initials(user.name ?? user.email)}
-        </span>
-        <span className="hidden sm:block max-w-[120px] truncate text-xs">
-          {user.name ?? user.email}
-        </span>
-        <ChevronDown size={12} aria-hidden="true" />
-      </button>
-
-      {isOpen && (
-        <div
-          role="menu"
+    <Menu
+      label="User menu"
+      header={
+        <>
+          <p className="truncate text-sm font-medium text-fg">{user.name ?? 'Account'}</p>
+          <p className="truncate type-caption text-fg-secondary">{user.email}</p>
+        </>
+      }
+      items={[
+        { id: 'settings', label: 'Settings', icon: Settings, href: ROUTES.settings },
+        {
+          id: 'sign-out',
+          label: signOut.isPending ? 'Signing out…' : 'Sign out',
+          icon: LogOut,
+          disabled: signOut.isPending,
+          onSelect: () => signOut.mutate(),
+        },
+      ]}
+      trigger={(props) => (
+        <button
+          {...props}
+          type="button"
           aria-label="User menu"
           className={cn(
-            'absolute right-0 top-full z-20 mt-1.5 w-52',
-            'rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-lg',
-            'p-1 overflow-hidden',
+            'flex h-8 items-center gap-2 rounded-control pl-1 pr-2 text-sm focus-ring',
+            'text-fg-secondary transition-colors duration-fast ease-standard hover:bg-layer-hover hover:text-fg',
+            'aria-expanded:bg-layer-selected aria-expanded:text-fg',
           )}
         >
-          {/* User info */}
-          <div className="px-3 py-2 border-b border-[hsl(var(--border))] mb-1">
-            <p className="text-xs font-medium text-[hsl(var(--foreground))] truncate">
-              {user.name ?? 'Account'}
-            </p>
-            <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">{user.email}</p>
-          </div>
-
-          <Link
-            href={ROUTES.settings}
-            role="menuitem"
-            onClick={() => setIsOpen(false)}
-            className={cn(
-              'flex items-center gap-2.5 rounded-md px-3 py-2 text-sm',
-              'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors',
-            )}
-          >
-            <Settings size={14} aria-hidden="true" />
-            Settings
-          </Link>
-
-          <button
-            role="menuitem"
-            onClick={() => {
-              setIsOpen(false);
-              signOut.mutate();
-            }}
-            disabled={signOut.isPending}
-            className={cn(
-              'flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm',
-              'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors',
-              'disabled:opacity-50',
-            )}
-          >
-            <LogOut size={14} aria-hidden="true" />
-            {signOut.isPending ? 'Signing out…' : 'Sign out'}
-          </button>
-        </div>
+          <Avatar name={displayName} />
+          <span className="hidden max-w-[140px] truncate text-xs sm:block">{displayName}</span>
+          <ChevronDown size={14} aria-hidden="true" />
+        </button>
       )}
-    </div>
+    />
   );
 }

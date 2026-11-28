@@ -13,6 +13,8 @@ interface DialogProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  /** max width: sm 400 px, md 480 px, lg 640 px */
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const FOCUSABLE =
@@ -22,7 +24,15 @@ const FOCUSABLE =
  * Modal dialog. Closes on Escape and backdrop click, keeps Tab focus inside the panel,
  * and returns focus to the element that opened it.
  */
-export function Dialog({ open, onClose, title, description, children, className }: DialogProps) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  description,
+  children,
+  className,
+  size = 'md',
+}: DialogProps) {
   const titleId = useId();
   const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -70,7 +80,7 @@ export function Dialog({ open, onClose, title, description, children, className 
             {...variants.fadeIn}
             transition={transition.fast}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/60"
+            className="fixed inset-0 z-50 bg-overlay"
             aria-hidden="true"
           />
           <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center p-4 pt-[15vh]">
@@ -85,21 +95,19 @@ export function Dialog({ open, onClose, title, description, children, className 
               aria-describedby={description ? descriptionId : undefined}
               tabIndex={-1}
               className={cn(
-                'pointer-events-auto w-full max-w-md rounded-xl border border-[hsl(var(--border))]',
-                'bg-[hsl(var(--card))] p-5 shadow-2xl outline-none',
+                'pointer-events-auto w-full rounded-dialog border border-border',
+                'bg-surface p-6 shadow-overlay outline-none',
+                { sm: 'max-w-[400px]', md: 'max-w-[480px]', lg: 'max-w-[640px]' }[size],
                 className,
               )}
             >
-              <div className="mb-4 flex items-start justify-between gap-4">
+              <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <h2 id={titleId} className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                  <h2 id={titleId} className="type-heading-sm text-fg">
                     {title}
                   </h2>
                   {description && (
-                    <p
-                      id={descriptionId}
-                      className="mt-1 text-sm text-[hsl(var(--muted-foreground))]"
-                    >
+                    <p id={descriptionId} className="mt-1 type-body text-fg-secondary">
                       {description}
                     </p>
                   )}
@@ -109,12 +117,12 @@ export function Dialog({ open, onClose, title, description, children, className 
                   onClick={onClose}
                   aria-label="Close"
                   className={cn(
-                    'rounded p-1 text-[hsl(var(--muted-foreground))] transition-colors',
-                    'hover:text-[hsl(var(--foreground))]',
-                    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-[hsl(var(--primary))]',
+                    '-mr-1.5 -mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-control',
+                    'text-fg-secondary transition-colors duration-fast hover:bg-layer-hover hover:text-fg',
+                    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus',
                   )}
                 >
-                  <X size={14} aria-hidden="true" />
+                  <X size={16} aria-hidden="true" />
                 </button>
               </div>
               {children}

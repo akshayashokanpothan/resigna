@@ -10,7 +10,7 @@ const routeLabels: Record<string, string> = {
   projects: 'Projects',
   settings: 'Settings',
   knowledge: 'Knowledge',
-  deliverables: 'Deliverables',
+  'design-system': 'Design system',
 };
 
 export function Breadcrumbs() {
@@ -38,23 +38,16 @@ export function Breadcrumbs() {
           return (
             <li key={href} className="flex items-center gap-1">
               {index > 0 && (
-                <ChevronRight
-                  size={12}
-                  className="text-[hsl(var(--muted-foreground))]"
-                  aria-hidden="true"
-                />
+                <ChevronRight size={12} className="text-fg-secondary" aria-hidden="true" />
               )}
               {isLast ? (
-                <span
-                  aria-current="page"
-                  className="text-sm font-medium text-[hsl(var(--foreground))]"
-                >
+                <span aria-current="page" className="text-sm font-medium text-fg">
                   {label}
                 </span>
               ) : (
                 <Link
                   href={href}
-                  className="text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
+                  className="text-sm text-fg-secondary hover:text-fg transition-colors"
                 >
                   {label}
                 </Link>

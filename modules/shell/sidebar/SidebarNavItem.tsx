@@ -5,51 +5,88 @@ import { usePathname } from 'next/navigation';
 import type { NavItem } from '@/config/navigation';
 import { cn } from '@/shared/utils/cn';
 import { useSidebarStore } from '@/stores/sidebar.store';
+import { Tooltip } from '@/shared/components/Tooltip';
 
 interface SidebarNavItemProps {
   item: NavItem;
 }
+
+const rowClass = cn(
+  'group relative flex h-8 w-full items-center gap-2.5 rounded-control px-2.5 text-sm',
+  'transition-colors duration-fast ease-standard',
+);
 
 export function SidebarNavItem({ item }: SidebarNavItemProps) {
   const pathname = usePathname();
   const { isCollapsed } = useSidebarStore();
   const isActive = item.href === '/' ? pathname === item.href : pathname.startsWith(item.href);
 
-  const content = (
-    <span
-      className={cn(
-        'flex items-center gap-3 rounded-md px-2.5 py-2 text-sm transition-colors w-full',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[hsl(var(--primary))]',
-        isActive
-          ? 'bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] font-medium'
-          : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]',
-        item.disabled &&
-          'cursor-not-allowed opacity-40 hover:bg-transparent hover:text-[hsl(var(--muted-foreground))]',
-      )}
-    >
-      <item.icon size={16} className="shrink-0" aria-hidden="true" />
-      {!isCollapsed && <span className="truncate">{item.label}</span>}
-    </span>
-  );
-
   if (item.disabled) {
+    const reason = item.description ? `${item.description}. Coming soon.` : 'Coming soon.';
     return (
-      <div
-        title={isCollapsed ? `${item.label} — ${item.disabledReason}` : item.disabledReason}
-        aria-disabled="true"
+      <Tooltip
+        content={isCollapsed ? `${item.label} — coming soon` : reason}
+        side="right"
+        triggerClassName="flex w-full"
       >
-        {content}
-      </div>
+        <span
+          aria-disabled="true"
+          className={cn(
+            rowClass,
+            'cursor-not-allowed text-fg-muted',
+            isCollapsed && 'justify-center px-0',
+          )}
+        >
+          <item.icon size={16} className="shrink-0" aria-hidden="true" />
+          {isCollapsed ? (
+            <span className="sr-only">{item.label} (coming soon)</span>
+          ) : (
+            <>
+              <span className="flex-1 truncate">{item.label}</span>
+              <span className="rounded-pill border border-border px-1.5 text-2xs leading-4 text-fg-secondary">
+                Soon
+              </span>
+            </>
+          )}
+        </span>
+      </Tooltip>
     );
   }
 
   return (
-    <Link
-      href={item.href}
-      title={isCollapsed ? item.label : undefined}
-      aria-current={isActive ? 'page' : undefined}
+    <Tooltip
+      content={item.label}
+      side="right"
+      disabled={!isCollapsed}
+      describesTrigger={false}
+      triggerClassName="flex w-full"
     >
-      {content}
-    </Link>
+      <Link
+        href={item.href}
+        aria-current={isActive ? 'page' : undefined}
+        aria-label={isCollapsed ? item.label : undefined}
+        className={cn(
+          rowClass,
+          'focus-ring',
+          isCollapsed && 'justify-center px-0',
+          isActive
+            ? 'bg-layer-selected font-medium text-fg'
+            : 'text-fg-secondary hover:bg-layer-hover hover:text-fg',
+        )}
+      >
+        {isActive && (
+          <span
+            aria-hidden="true"
+            className="absolute -left-2 top-1.5 bottom-1.5 w-[3px] rounded-r-xs bg-accent"
+          />
+        )}
+        <item.icon
+          size={16}
+          className={cn('shrink-0', isActive ? 'text-accent-text' : 'text-current')}
+          aria-hidden="true"
+        />
+        {!isCollapsed && <span className="truncate">{item.label}</span>}
+      </Link>
+    </Tooltip>
   );
 }
