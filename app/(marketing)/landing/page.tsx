@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import { APP_NAME, APP_TAGLINE, APP_URL } from '@/shared/constants/app.constants';
+import { APP_DISPLAY_NAME, APP_NAME, APP_TAGLINE, APP_URL } from '@/shared/constants/app.constants';
 import { ROUTES } from '@/shared/constants/routes';
 import { buttonVariants } from '@/shared/components/Button';
 import { Logo } from '@/shared/components/Logo';
 import { cn } from '@/shared/utils/cn';
 
 export const metadata: Metadata = {
-  title: { absolute: `${APP_NAME}: ${APP_TAGLINE}` },
+  title: { absolute: `${APP_DISPLAY_NAME}: ${APP_TAGLINE}` },
 };
 
 /**

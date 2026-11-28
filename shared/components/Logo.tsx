@@ -1,5 +1,7 @@
 import { cn } from '@/shared/utils/cn';
-import { APP_NAME } from '@/shared/constants/app.constants';
+import { APP_DISPLAY_NAME, APP_NAME } from '@/shared/constants/app.constants';
+import { IS_BETA } from '@/shared/constants/release';
+import { BetaBadge } from './BetaBadge';
 
 /*
  * Resigna "Connected Insights" mark, copied node-for-node from the brand kit
@@ -95,19 +97,22 @@ interface LogoProps {
   className?: string;
 }
 
-/** Horizontal lockup: symbol + "Resigna" wordmark (Inter Medium, −2.5 tracking, per the kit). */
+/**
+ * Horizontal lockup: symbol + "Resigna" wordmark (Inter Medium, −2.5 tracking, per the kit).
+ * On BA builds a Beta badge follows the lockup; the kit artwork itself is untouched.
+ */
 export function Logo({ height = 24, tone = 'full-color', className }: LogoProps) {
   const wordmarkFill = tone === 'mono' ? 'currentColor' : 'var(--resigna-text-primary)';
   // The kit's 620-unit canvas leaves room after the word; trim to the wordmark's end.
   const viewWidth = 372;
-  return (
+  const lockup = (
     <svg
       viewBox={`0 0 ${viewWidth} 100`}
       height={height}
       width={(height * viewWidth) / 100}
       role="img"
-      aria-label={APP_NAME}
-      className={cn('shrink-0', className)}
+      aria-label={APP_DISPLAY_NAME}
+      className={cn('shrink-0', !IS_BETA && className)}
       focusable="false"
     >
       <SymbolGeometry tone={tone} />
@@ -123,5 +128,12 @@ export function Logo({ height = 24, tone = 'full-color', className }: LogoProps)
         {APP_NAME}
       </text>
     </svg>
+  );
+  if (!IS_BETA) return lockup;
+  return (
+    <span className={cn('inline-flex shrink-0 items-center gap-2', className)}>
+      {lockup}
+      <BetaBadge />
+    </span>
   );
 }
