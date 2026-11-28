@@ -6,6 +6,8 @@
 export const ROUTES = {
   home: '/',
   login: '/login',
+  signup: '/signup',
+  landing: '/landing',
   projects: '/projects',
   project: (id: string) => `/projects/${id}`,
   settings: '/settings',
