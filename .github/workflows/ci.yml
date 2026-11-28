@@ -60,7 +60,8 @@ jobs:
         run: npm ci
 
       - name: Start local Supabase (applies supabase/migrations)
-        run: npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta,realtime,storage-api
+        # storage-api stays on: research sources upload files to the research-sources bucket.
+        run: npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta,realtime
 
       - name: Export local Supabase settings
         run: |
