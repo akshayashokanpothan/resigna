@@ -21,11 +21,11 @@ export function SidebarRecentProjects() {
   }
 
   return (
-    <div className="mt-5">
+    <nav className="mt-5" aria-labelledby="recent-projects-heading">
       <h3 id="recent-projects-heading" className="px-2.5 pb-1 type-overline text-fg-secondary">
         Recent projects
       </h3>
-      <ul className="flex flex-col gap-0.5" role="list" aria-labelledby="recent-projects-heading">
+      <ul className="flex flex-col gap-0.5" role="list">
         {recentProjects.map((project) => {
           const href = ROUTES.project(project.id);
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -55,6 +55,6 @@ export function SidebarRecentProjects() {
           );
         })}
       </ul>
-    </div>
+    </nav>
   );
 }
